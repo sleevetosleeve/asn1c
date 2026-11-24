@@ -132,15 +132,13 @@ check_record_failure(void) {
         0xa1, 0x66, 'a', 'c', 't', 'i', 'v', 'e', 0xf5
     };
     source.present = Variant_PR_record;
-    source.choice.record = calloc(1, sizeof(*source.choice.record));
-    assert(source.choice.record);
-    assert(OCTET_STRING_fromString(&source.choice.record->label, "Alice") == 0);
+    assert(OCTET_STRING_fromString(&source.choice.record.label, "Alice") == 0);
     assert(cbor_encode(&asn_DEF_Variant, &source, append_bytes, &output).encoded >= 0);
     assert(output.used > 10);
     decoded = NULL;
     result = cbor_decode(0, &asn_DEF_Variant, (void **)&decoded, output.bytes, output.used);
     assert(result.code == RC_OK && decoded && decoded->present == Variant_PR_record);
-    assert(decoded->choice.record && decoded->choice.record->label.size == 5);
+    assert(decoded->choice.record.label.size == 5);
     ASN_STRUCT_FREE(asn_DEF_Variant, decoded);
 
     /* The final child byte is required and partial storage is released. */

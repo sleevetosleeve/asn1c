@@ -24,20 +24,20 @@ cat >"$test_dir/short/use.c" <<'EOF'
 #include "Bunch.h"
 #include "Holder.h"
 int use_members(struct Bunch *b, struct Holder *h) {
-    return b->field_REAL->list.count + b->field_IA5String->list.count
-        + h->a->n.size + h->b->n.size;
+    return b->field_REAL.list.count + b->field_IA5String.list.count
+        + h->a.n.size + h->b->n.size;
 }
 EOF
 "$CC" -I"$test_dir/short" -c "$test_dir/short/use.c" -o "$test_dir/short/use.o"
-grep -Eq 'struct Collection_[0-9]+P0[[:space:]]+\*field_REAL;' "$test_dir/short/Bunch.h"
-grep -Eq 'struct Collection_[0-9]+P1[[:space:]]+\*field_IA5String;' "$test_dir/short/Bunch.h"
-grep -Eq 'struct Base[[:space:]]+\*a;' "$test_dir/short/Holder.h"
+grep -Eq 'Collection_[0-9]+P0_t[[:space:]]+field_REAL;' "$test_dir/short/Bunch.h"
+grep -Eq 'Collection_[0-9]+P1_t[[:space:]]+field_IA5String;' "$test_dir/short/Bunch.h"
+grep -Eq 'Alias_t[[:space:]]+a;' "$test_dir/short/Holder.h"
 
 # A configured prefix must appear identically in definitions and references.
 "$ASN1C" -P -fwide-types -fprefix=Safe_ \
     "$top_srcdir/tests/tests-asn1c-compiler/issue-592/StructTags.asn1" >"$test_dir/prefix.out"
 grep -Eq '^typedef struct Safe_Collection_[0-9]+P0 \{' "$test_dir/prefix.out"
-grep -Eq 'struct Safe_Collection_[0-9]+P0[[:space:]]+\*field_REAL;' "$test_dir/prefix.out"
+grep -Eq 'Safe_Collection_[0-9]+P0_t[[:space:]]+field_REAL;' "$test_dir/prefix.out"
 
 # A valid name beyond the former 512-byte buffer must retain its full tag.
 long_type=$(awk 'BEGIN { printf "Collection"; for(i = 0; i < 600; i++) printf "X" }')
@@ -52,6 +52,6 @@ long_tag=$(awk -v prefix="$long_type" \
     '$1 == "typedef" && $2 == "struct" && index($3, prefix "_") == 1 { print $3; exit }' \
     "$test_dir/long.out")
 test -n "$long_tag"
-grep -F "struct $long_tag" "$test_dir/long.out" | grep -F '*field_REAL;' >/dev/null
+grep -F "$long_tag" "$test_dir/long.out" | grep -F ' field_REAL;' >/dev/null
 
 echo 'PASS: issue #592 struct tags, aliases, and long identifiers'

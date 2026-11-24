@@ -110,17 +110,17 @@ static int
 asn1c_collection_constraint_3(const asn_TYPE_descriptor_t *td, const void *sptr,
 			asn_app_constraint_failed_f *ctfailcb, void *app_key) {
 	size_t size;
-
+	
 	if(!sptr) {
 		ASN__CTFAIL(app_key, td, sptr,
 			"%s: value not given (%s:%d)",
 			td->name, __FILE__, __LINE__);
 		return -1;
 	}
-
+	
 	/* Determine the number of elements */
 	size = _A_CSEQUENCE_FROM_VOID(sptr)->count;
-
+	
 	if((size >= 1UL && size <= 32UL)) {
 		/* Perform validation of the inner elements */
 		return SEQUENCE_OF_constraint(td, sptr, ctfailcb, app_key);
@@ -187,17 +187,17 @@ static int
 asn1c_collection_constraint_7(const asn_TYPE_descriptor_t *td, const void *sptr,
 			asn_app_constraint_failed_f *ctfailcb, void *app_key) {
 	size_t size;
-
+	
 	if(!sptr) {
 		ASN__CTFAIL(app_key, td, sptr,
 			"%s: value not given (%s:%d)",
 			td->name, __FILE__, __LINE__);
 		return -1;
 	}
-
+	
 	/* Determine the number of elements */
 	size = _A_CSEQUENCE_FROM_VOID(sptr)->count;
-
+	
 	if((size >= 1UL && size <= 32UL)) {
 		/* Perform validation of the inner elements */
 		return SEQUENCE_OF_constraint(td, sptr, ctfailcb, app_key);
@@ -821,17 +821,17 @@ static int
 asn1c_collection_constraint_14(const asn_TYPE_descriptor_t *td, const void *sptr,
 			asn_app_constraint_failed_f *ctfailcb, void *app_key) {
 	size_t size;
-
+	
 	if(!sptr) {
 		ASN__CTFAIL(app_key, td, sptr,
 			"%s: value not given (%s:%d)",
 			td->name, __FILE__, __LINE__);
 		return -1;
 	}
-
+	
 	/* Determine the number of elements */
 	size = _A_CSEQUENCE_FROM_VOID(sptr)->count;
-
+	
 	if((size >= 1UL && size <= 10UL)) {
 		/* Perform validation of the inner elements */
 		return SEQUENCE_OF_constraint(td, sptr, ctfailcb, app_key);
@@ -899,17 +899,17 @@ static int
 asn1c_collection_constraint_19(const asn_TYPE_descriptor_t *td, const void *sptr,
 			asn_app_constraint_failed_f *ctfailcb, void *app_key) {
 	size_t size;
-
+	
 	if(!sptr) {
 		ASN__CTFAIL(app_key, td, sptr,
 			"%s: value not given (%s:%d)",
 			td->name, __FILE__, __LINE__);
 		return -1;
 	}
-
+	
 	/* Determine the number of elements */
 	size = _A_CSEQUENCE_FROM_VOID(sptr)->count;
-
+	
 	if((size >= 1UL && size <= 10UL)) {
 		/* Perform validation of the inner elements */
 		return SEQUENCE_OF_constraint(td, sptr, ctfailcb, app_key);

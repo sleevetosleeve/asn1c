@@ -6680,7 +6680,26 @@ typedef struct {
 	size_t path_len;          /* Current path length */
 	size_t path_capacity;     /* Allocated capacity */
 	asn1p_expr_t *target;     /* Type we're looking for */
+	int tainted;              /* Saw a dependency edge we cannot follow
+	                           * (parameterized instance / IOC class field),
+	                           * so a not-found cycle is not proof of
+	                           * acyclicity: be conservative, use pointers. */
 } circ_detect_ctx_t;
+
+/*
+ * Type identity for cycle detection.  Parameterized-type instantiation can
+ * make the resolver return a substituted clone of a type instead of the
+ * canonical definition node, so a plain pointer comparison can miss the
+ * target; fall back to module+identifier equality in that case.
+ */
+static int
+same_type_node(asn1p_expr_t *a, asn1p_expr_t *b) {
+	if(a == b) return 1;
+	if(a && b && a->Identifier && b->Identifier && a->module == b->module
+	   && !strcmp(a->Identifier, b->Identifier))
+		return 1;
+	return 0;
+}
 
 /*
  * Enhanced callback for circular dependency detection.
@@ -6689,11 +6708,18 @@ typedef struct {
 static int
 check_is_refer_to_enhanced(arg_t *arg, circ_detect_ctx_t *ctx) {
 	asn1p_expr_t *terminal = terminal_structable(arg, arg->expr);
-	
+	if(!terminal) {
+		/* Parameterized instances and other non-top-level references do not
+		 * pass terminal_structable(); resolve them fully so dependency edges
+		 * through them (which still produce header includes) are followed. */
+		terminal = asn1f_find_terminal_type_ex(arg->asn, arg->ns, arg->expr);
+		if(!terminal || !(terminal->expr_type & ASN_CONSTR_MASK))
+			return 0;
+	}
 	if(!terminal) return 0;
 	
 	/* Check if we found our target */
-	if(terminal == ctx->target) {
+	if(same_type_node(terminal, ctx->target)) {
 		if(arg->expr->marker.flags & EM_INDIRECT)
 			return 1; /* Safe indirection through pointer */
 		return 2; /* Direct circular dependency */
@@ -6719,17 +6745,13 @@ check_is_refer_to_enhanced(arg_t *arg, circ_detect_ctx_t *ctx) {
 	int maxret = 0;
 	asn1p_expr_t *memb;
 	TQ_FOR(memb, &(terminal->members), next) {
-		/* Only follow constructed type members that could create circular dependencies.
-		 * Skip: 
-		 * - Members already converted to pointers (EM_INDIRECT)
-		 * - Optional members (already break cycles through pointer indirection)
-		 * - Non-constructed types (primitive types can't create circular dependencies)
-		 */
-		if(memb->marker.flags & (EM_INDIRECT | EM_OPTIONAL)) {
-			continue;
-		}
-		
-		/* Check if this member is a constructed type reference */
+		/* Only follow constructed type members that could create circular
+		 * dependencies.  Note: EM_INDIRECT and EM_OPTIONAL members are
+		 * pointers, so they cannot create *size* cycles, but they still
+		 * create header include edges, so they must be followed here:
+		 * a by-value member whose type transitively includes the current
+		 * header would not compile.  Skip only non-reference members and
+		 * non-constructed types (primitives can't create cycles). */
 		if(memb->expr_type != A1TC_REFERENCE) {
 			continue; /* Not a type reference, skip */
 		}
@@ -6738,6 +6760,26 @@ check_is_refer_to_enhanced(arg_t *arg, circ_detect_ctx_t *ctx) {
 		arg_t tmp_arg = *arg;
 		tmp_arg.expr = memb;
 		asn1p_expr_t *memb_terminal = terminal_structable(&tmp_arg, memb);
+		if(!memb_terminal) {
+			memb_terminal = asn1f_find_terminal_type_ex(arg->asn, arg->ns, memb);
+		}
+		if(memb->expr_type == A1TC_REFERENCE && memb->reference) {
+			int is_ioc = memb->reference->comp_count >= 2
+				&& memb->reference->components[memb->reference->comp_count - 1].name[0] == '&';
+			if(is_ioc || memb->rhs_pspecs || !memb_terminal)
+				ctx->tainted = 1; /* dependency edge we cannot fully follow */
+		}
+		if(!memb_terminal
+		   && memb->expr_type == A1TC_REFERENCE && memb->reference
+		   && memb->reference->comp_count >= 2
+		   && memb->reference->components[memb->reference->comp_count - 1].name[0] == '&') {
+			/* IOC class-field reference (CLASS.&field): these also produce
+			 * header includes, so follow them through the class access. */
+			memb_terminal = asn1f_class_access_ex(arg->asn, memb->module, arg->ns,
+				memb, memb->rhs_pspecs, memb->reference);
+			if(memb_terminal)
+				memb_terminal = asn1f_find_terminal_type_ex(arg->asn, arg->ns, memb_terminal);
+		}
 		if(!memb_terminal || !(memb_terminal->expr_type & ASN_CONSTR_MASK)) {
 			continue; /* Not a constructed type, skip */
 		}
@@ -6745,6 +6787,23 @@ check_is_refer_to_enhanced(arg_t *arg, circ_detect_ctx_t *ctx) {
 		int ret = check_is_refer_to_enhanced(&tmp_arg, ctx);
 		if(ret > maxret) maxret = ret;
 		if(maxret > 1) break; /* Found explicit circular dependency */
+
+		/* Follow actual parameters of parameterized instances: they are
+		 * part of the dependency graph and produce header includes too. */
+		if(memb->rhs_pspecs) {
+			asn1p_expr_t *pspec;
+			TQ_FOR(pspec, &(memb->rhs_pspecs->members), next) {
+				if(pspec->expr_type != A1TC_REFERENCE) continue;
+				arg_t ps_arg = *arg;
+				ps_arg.expr = pspec;
+				asn1p_expr_t *ps_terminal = asn1f_find_terminal_type_ex(arg->asn, arg->ns, pspec);
+				if(!ps_terminal || !(ps_terminal->expr_type & ASN_CONSTR_MASK))
+					continue;
+				ret = check_is_refer_to_enhanced(&ps_arg, ctx);
+				if(ret > maxret) maxret = ret;
+				if(maxret > 1) break;
+			}
+		}
 	}
 	
 	/* Remove terminal from path before returning */
@@ -6756,7 +6815,7 @@ check_is_refer_to_enhanced(arg_t *arg, circ_detect_ctx_t *ctx) {
 static int
 check_is_refer_to(arg_t *arg, void *key) {
 	asn1p_expr_t *terminal = terminal_structable(arg, arg->expr);
-	if(terminal == key) {
+	if(terminal && same_type_node(terminal, (asn1p_expr_t *)key)) {
 		if(arg->expr->marker.flags & EM_INDIRECT)
 			return 1; /* This is almost safe indirection */
 		return 2;
@@ -6799,10 +6858,15 @@ expr_defined_recursively(arg_t *arg, asn1p_expr_t *expr) {
 			.path = NULL,
 			.path_len = 0,
 			.path_capacity = 0,
-			.target = topmost
+			.target = topmost,
+			.tainted = 0
 		};
 		
-		result = check_is_refer_to_enhanced(arg, &ctx);
+		arg_t tmp = *arg;
+		tmp.expr = expr;
+		result = check_is_refer_to_enhanced(&tmp, &ctx);
+		if(result == 0 && ctx.tainted)
+			result = 2; /* unfollowable dependency edges: stay safe, use pointer */
 		
 		if(ctx.path) {
 			free(ctx.path);

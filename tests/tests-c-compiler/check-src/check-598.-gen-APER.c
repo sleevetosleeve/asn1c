@@ -87,9 +87,9 @@ check_untagged_choice_order(void) {
     memset(&source, 0, sizeof(source));
     memset(&choice, 0, sizeof(choice));
     source.n = 7;
-    source.c = &choice;
     choice.present = Choice_PR_x;
     choice.choice.x = 1;
+    source.c = choice;
     assert(specs->tag2el_count == 3);
     assert(specs->tag2el_count > asn_DEF_ChoiceSet.elements_count);
     memcpy(saved_entries, specs->tag2el, sizeof(saved_entries));
@@ -102,8 +102,8 @@ check_untagged_choice_order(void) {
                      (size_t)(er.encoded + 7) / 8, 0,
                      (int)(((er.encoded + 7) / 8) * 8 - er.encoded));
     assert(dr.code == RC_OK);
-    assert(decoded->n == source.n && decoded->c);
-    assert(decoded->c->present == Choice_PR_x && decoded->c->choice.x == 1);
+    assert(decoded->n == source.n);
+    assert(decoded->c.present == Choice_PR_x && decoded->c.choice.x == 1);
     ASN_STRUCT_FREE(asn_DEF_ChoiceSet, decoded);
     decoded = 0;
 

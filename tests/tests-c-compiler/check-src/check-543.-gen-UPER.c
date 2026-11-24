@@ -53,16 +53,15 @@ check_M_roundtrip(void) {
 
 	rv = uper_decode(0, &asn_DEF_M, (void **)&m, enc, sizeof enc, 0, 0);
 	assert(rv.code == RC_OK);
-	assert(m->s != 0);
-	assert(m->s->a == 1);
-	assert(m->s->b == 1);
+	assert(m->s.a == 1);
+	assert(m->s.b == 1);
 	ASN_STRUCT_FREE(asn_DEF_M, m);
 
 	memset(&src, 0, sizeof(src));
 	memset(&src_s, 0, sizeof(src_s));
 	src_s.a = 1;
 	src_s.b = 1;
-	src.s = &src_s;
+	src.s = src_s;
 	er = uper_encode_to_buffer(&asn_DEF_M, 0, &src, buf, sizeof buf);
 	assert(er.encoded == 9);
 	assert(buf[0] == 0x01 && buf[1] == 0x80);
@@ -280,7 +279,7 @@ check_S4_untagged_choice_order(void) {
 		src.n = 7;
 		src_c.present = CH_PR_x;
 		src_c.choice.x = 1;
-		src.c = &src_c;
+		src.c = src_c;
 		er = uper_encode_to_buffer(&asn_DEF_S4, 0, &src, buf, sizeof buf);
 		assert(er.encoded == 17);
 		assert(buf[0] == 0x00 && buf[1] == 0x83 && buf[2] == 0x80);
@@ -289,9 +288,8 @@ check_S4_untagged_choice_order(void) {
 				 0, 0);
 		assert(rv.code == RC_OK);
 		assert(s4->n == 7);
-		assert(s4->c != 0);
-		assert(s4->c->present == CH_PR_x);
-		assert(s4->c->choice.x == 1);
+		assert(s4->c.present == CH_PR_x);
+		assert(s4->c.choice.x == 1);
 		ASN_STRUCT_FREE(asn_DEF_S4, s4);
 	}
 
@@ -310,7 +308,7 @@ check_S4_untagged_choice_order(void) {
 		src.n = 7;
 		src_c.present = CH_PR_y;
 		src_c.choice.y = 1;
-		src.c = &src_c;
+		src.c = src_c;
 		er = uper_encode_to_buffer(&asn_DEF_S4, 0, &src, buf, sizeof buf);
 		assert(er.encoded == 10);
 		assert(buf[0] == 0xc1 && buf[1] == 0xc0);
@@ -319,9 +317,8 @@ check_S4_untagged_choice_order(void) {
 				 0, 0);
 		assert(rv.code == RC_OK);
 		assert(s4->n == 7);
-		assert(s4->c != 0);
-		assert(s4->c->present == CH_PR_y);
-		assert(s4->c->choice.y != 0);
+		assert(s4->c.present == CH_PR_y);
+		assert(s4->c.choice.y != 0);
 		ASN_STRUCT_FREE(asn_DEF_S4, s4);
 	}
 }

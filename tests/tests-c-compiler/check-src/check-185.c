@@ -77,28 +77,18 @@ fill_message(Message_t *msg) {
 	assert(OCTET_STRING_fromBuf(&msg->named, "World", 5) == 0);
 	assert(OCTET_STRING_fromBuf(&msg->prefixed, "Prefix", 6) == 0);
 
-	msg->nested = calloc(1, sizeof(*msg->nested));
-	assert(msg->nested != 0);
-	assert(OCTET_STRING_fromBuf(&msg->nested->embedded, "Nest", 4) == 0);
+	assert(OCTET_STRING_fromBuf(&msg->nested.embedded, "Nest", 4) == 0);
 
-	msg->nestedSet = calloc(1, sizeof(*msg->nestedSet));
-	assert(msg->nestedSet != 0);
-	assert(OCTET_STRING_fromBuf(&msg->nestedSet->setEmbedded, "Set", 3) == 0);
+	assert(OCTET_STRING_fromBuf(&msg->nestedSet.setEmbedded, "Set", 3) == 0);
 
-	msg->choice = calloc(1, sizeof(*msg->choice));
-	assert(msg->choice != 0);
-	msg->choice->present = PayloadChoice_PR_chosen;
-	assert(OCTET_STRING_fromBuf(&msg->choice->choice.chosen, "Choice", 6) == 0);
+	msg->choice.present = PayloadChoice_PR_chosen;
+	assert(OCTET_STRING_fromBuf(&msg->choice.choice.chosen, "Choice", 6) == 0);
 
-	msg->seqOf = calloc(1, sizeof(*msg->seqOf));
-	assert(msg->seqOf != 0);
-	assert(ASN_SEQUENCE_ADD(&msg->seqOf->list, make_octets("One")) == 0);
-	assert(ASN_SEQUENCE_ADD(&msg->seqOf->list, make_octets("Two")) == 0);
+	assert(ASN_SEQUENCE_ADD(&msg->seqOf.list, make_octets("One")) == 0);
+	assert(ASN_SEQUENCE_ADD(&msg->seqOf.list, make_octets("Two")) == 0);
 
-	msg->setOf = calloc(1, sizeof(*msg->setOf));
-	assert(msg->setOf != 0);
-	assert(ASN_SET_ADD(&msg->setOf->list, make_octets("Red")) == 0);
-	assert(ASN_SET_ADD(&msg->setOf->list, make_octets("Blue")) == 0);
+	assert(ASN_SET_ADD(&msg->setOf.list, make_octets("Red")) == 0);
+	assert(ASN_SET_ADD(&msg->setOf.list, make_octets("Blue")) == 0);
 }
 
 static void
@@ -133,21 +123,16 @@ check_decoded_message(Message_t *msg) {
 	check_bytes(&msg->payload, "Hello");
 	check_bytes(&msg->named, "World");
 	check_bytes(&msg->prefixed, "Prefix");
-	assert(msg->nested != 0);
-	check_bytes(&msg->nested->embedded, "Nest");
-	assert(msg->nestedSet != 0);
-	check_bytes(&msg->nestedSet->setEmbedded, "Set");
-	assert(msg->choice != 0);
-	assert(msg->choice->present == PayloadChoice_PR_chosen);
-	check_bytes(&msg->choice->choice.chosen, "Choice");
-	assert(msg->seqOf != 0);
-	assert(msg->seqOf->list.count == 2);
-	check_bytes(msg->seqOf->list.array[0], "One");
-	check_bytes(msg->seqOf->list.array[1], "Two");
-	assert(msg->setOf != 0);
-	assert(msg->setOf->list.count == 2);
-	assert(set_contains(msg->setOf, "Red"));
-	assert(set_contains(msg->setOf, "Blue"));
+	check_bytes(&msg->nested.embedded, "Nest");
+	check_bytes(&msg->nestedSet.setEmbedded, "Set");
+	assert(msg->choice.present == PayloadChoice_PR_chosen);
+	check_bytes(&msg->choice.choice.chosen, "Choice");
+	assert(msg->seqOf.list.count == 2);
+	check_bytes(msg->seqOf.list.array[0], "One");
+	check_bytes(msg->seqOf.list.array[1], "Two");
+	assert(msg->setOf.list.count == 2);
+	assert(set_contains(&msg->setOf, "Red"));
+	assert(set_contains(&msg->setOf, "Blue"));
 	assert(msg->count == 7);
 }
 

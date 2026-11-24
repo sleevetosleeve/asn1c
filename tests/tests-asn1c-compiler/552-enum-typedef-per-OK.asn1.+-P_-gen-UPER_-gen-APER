@@ -204,7 +204,7 @@ asn_TYPE_descriptor_t asn_DEF_MyEnumAlias = {
 
 typedef struct Container {
 	MyEnumAlias_t	*value;	/* OPTIONAL */
-
+	
 	/* Context for parsing across buffer boundaries */
 	asn_struct_ctx_t _asn_ctx;
 } Container_t;
@@ -315,11 +315,11 @@ typedef struct EXTERNAL {
 			OCTET_STRING_t	 octet_aligned;
 			BIT_STRING_t	 arbitrary;
 		} choice;
-
+		
 		/* Context for parsing across buffer boundaries */
 		asn_struct_ctx_t _asn_ctx;
 	} encoding;
-
+	
 	/* Context for parsing across buffer boundaries */
 	asn_struct_ctx_t _asn_ctx;
 } EXTERNAL_t;
