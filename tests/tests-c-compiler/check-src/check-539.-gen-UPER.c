@@ -60,8 +60,7 @@ int main() {
 			sizeof(nest_ext) - 1, 0, 0);
 	assert(rv.code == RC_OK);
 	assert(n->a == 5);
-	assert(n->ch != 0);
-	assert(n->ch->present == C_PR_NOTHING);
+	assert(n->ch.present == C_PR_NOTHING);
 	assert(n->b == 7);
 	ASN_STRUCT_FREE(asn_DEF_N, n);
 

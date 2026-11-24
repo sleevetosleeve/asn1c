@@ -58,17 +58,17 @@ static int
 asn1c_collection_constraint_3(const asn_TYPE_descriptor_t *td, const void *sptr,
 			asn_app_constraint_failed_f *ctfailcb, void *app_key) {
 	size_t size;
-
+	
 	if(!sptr) {
 		ASN__CTFAIL(app_key, td, sptr,
 			"%s: value not given (%s:%d)",
 			td->name, __FILE__, __LINE__);
 		return -1;
 	}
-
+	
 	/* Determine the number of elements */
 	size = _A_CSEQUENCE_FROM_VOID(sptr)->count;
-
+	
 	if((size >= 1UL)) {
 		/* Perform validation of the inner elements */
 		return SEQUENCE_OF_constraint(td, sptr, ctfailcb, app_key);
@@ -266,13 +266,13 @@ asn_TYPE_descriptor_t asn_DEF_LogLine = {
 
 /*** <<< INCLUDES [VariablePartSet] >>> ***/
 
+#include "ActionItem.h"
 #include <asn_SEQUENCE_OF.h>
 #include <constr_SEQUENCE_OF.h>
 #include <constr_SEQUENCE.h>
 
 /*** <<< FWD-DECLS [VariablePartSet] >>> ***/
 
-struct ActionItem;
 struct VariablePart;
 
 /*** <<< TYPE-DECLS [VariablePartSet] >>> ***/
@@ -284,7 +284,7 @@ typedef struct VariablePartSet {
 		/* Context for parsing across buffer boundaries */
 		asn_struct_ctx_t _asn_ctx;
 	} vparts;
-	struct ActionItem	*resolution;
+	ActionItem_t	 resolution;
 	/*
 	 * This type is extensible,
 	 * possible extensions are below.
@@ -302,7 +302,6 @@ extern asn_TYPE_member_t asn_MBR_VariablePartSet_6[2];
 
 /*** <<< POST-INCLUDE [VariablePartSet] >>> ***/
 
-#include "ActionItem.h"
 #include "VariablePart.h"
 
 /*** <<< CODE [VariablePartSet] >>> ***/
@@ -325,19 +324,19 @@ extern asn_TYPE_member_t asn_MBR_VariablePartSet_6[2];
 static int
 asn1c_collection_constraint_7(const asn_TYPE_descriptor_t *td, const void *sptr,
 			asn_app_constraint_failed_f *ctfailcb, void *app_key) {
-
+	
 	if(!sptr) {
 		ASN__CTFAIL(app_key, td, sptr,
 			"%s: value not given (%s:%d)",
 			td->name, __FILE__, __LINE__);
 		return -1;
 	}
-
-
+	
+	
 	if(1 /* No applicable constraints whatsoever */) {
 		/* Nothing is here. See below */
 	}
-
+	
 	return SEQUENCE_OF_constraint(td, sptr, ctfailcb, app_key);
 }
 
@@ -453,7 +452,7 @@ asn_TYPE_member_t asn_MBR_VariablePartSet_6[] = {
 		0, 0, /* No default value */
 		.name = "vparts"
 		},
-	{ ATF_POINTER, 0, offsetof(struct VariablePartSet, resolution),
+	{ ATF_NOFLAGS, 0, offsetof(struct VariablePartSet, resolution),
 		.tag = (ASN_TAG_CLASS_UNIVERSAL | (16 << 2)),
 		.tag_mode = 0,
 		.type = &asn_DEF_ActionItem,
@@ -595,17 +594,17 @@ static int
 asn1c_collection_constraint_12(const asn_TYPE_descriptor_t *td, const void *sptr,
 			asn_app_constraint_failed_f *ctfailcb, void *app_key) {
 	size_t size;
-
+	
 	if(!sptr) {
 		ASN__CTFAIL(app_key, td, sptr,
 			"%s: value not given (%s:%d)",
 			td->name, __FILE__, __LINE__);
 		return -1;
 	}
-
+	
 	/* Determine the number of elements */
 	size = _A_CSET_FROM_VOID(sptr)->count;
-
+	
 	if((size >= 1UL)) {
 		/* Perform validation of the inner elements */
 		return SET_OF_constraint(td, sptr, ctfailcb, app_key);

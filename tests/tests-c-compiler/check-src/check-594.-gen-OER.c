@@ -98,10 +98,8 @@ main(void) {
     memset(&choice_source, 0, sizeof(choice_source));
     choice_source.high = 9;
     choice_source.low = 1;
-    choice_source.picked = (Pick_t *)calloc(1, sizeof(*choice_source.picked));
-    assert(choice_source.picked);
-    choice_source.picked->present = Pick_PR_pickHigh;
-    choice_source.picked->choice.pickHigh = 7;
+    choice_source.picked.present = Pick_PR_pickHigh;
+    choice_source.picked.choice.pickHigh = 7;
     er = oer_encode_to_buffer(&asn_DEF_ChoiceSet, 0, &choice_source, encoded,
                               sizeof(encoded));
     assert(er.encoded == 4);
@@ -113,9 +111,8 @@ main(void) {
         (size_t)er.encoded);
     assert(dr.code == RC_OK && dr.consumed == (size_t)er.encoded);
     assert(choice_decoded->low != 0 && choice_decoded->high == 9);
-    assert(choice_decoded->picked
-           && choice_decoded->picked->present == Pick_PR_pickHigh
-           && choice_decoded->picked->choice.pickHigh == 7);
+    assert(choice_decoded->picked.present == Pick_PR_pickHigh
+           && choice_decoded->picked.choice.pickHigh == 7);
     ASN_STRUCT_FREE(asn_DEF_ChoiceSet, choice_decoded);
     ASN_STRUCT_FREE_CONTENTS_ONLY(asn_DEF_ChoiceSet, &choice_source);
     choice_decoded = 0;

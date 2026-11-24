@@ -33,9 +33,9 @@ check_root_order(void) {
     memset(&src, 0, sizeof(src));
     memset(&choice, 0, sizeof(choice));
     src.n = 5;
-    src.c = &choice;
     choice.present = CH_PR_root;
     choice.choice.root = 1;
+    src.c = choice;
     er = uper_encode_to_buffer(&asn_DEF_S, 0, &src, encoded, sizeof(encoded));
     assert(er.encoded == 10);
     assert(memcmp(encoded, expected, sizeof(expected)) == 0);
@@ -44,8 +44,8 @@ check_root_order(void) {
     dr = uper_decode(0, &asn_DEF_S, (void **)&decoded, expected,
                      sizeof(expected), 0, 0);
     assert(dr.code == RC_OK && decoded->n == 5);
-    assert(decoded->c && decoded->c->present == CH_PR_root);
-    assert(decoded->c->choice.root == 1);
+    assert(decoded->c.present == CH_PR_root);
+    assert(decoded->c.choice.root == 1);
     ASN_STRUCT_FREE(asn_DEF_S, decoded);
     decoded = 0;
     dr = uper_decode(0, &asn_DEF_S, (void **)&decoded, expected, 1, 0, 0);

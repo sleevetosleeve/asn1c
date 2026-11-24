@@ -402,17 +402,17 @@ static int
 asn1c_collection_constraint_28(const asn_TYPE_descriptor_t *td, const void *sptr,
 			asn_app_constraint_failed_f *ctfailcb, void *app_key) {
 	size_t size;
-
+	
 	if(!sptr) {
 		ASN__CTFAIL(app_key, td, sptr,
 			"%s: value not given (%s:%d)",
 			td->name, __FILE__, __LINE__);
 		return -1;
 	}
-
+	
 	/* Determine the number of elements */
 	size = _A_CSEQUENCE_FROM_VOID(sptr)->count;
-
+	
 	if((size >= 1UL && size <= 256UL)) {
 		/* Perform validation of the inner elements */
 		return SEQUENCE_OF_constraint(td, sptr, ctfailcb, app_key);
@@ -545,17 +545,17 @@ static int
 asn1c_collection_constraint_29(const asn_TYPE_descriptor_t *td, const void *sptr,
 			asn_app_constraint_failed_f *ctfailcb, void *app_key) {
 	size_t size;
-
+	
 	if(!sptr) {
 		ASN__CTFAIL(app_key, td, sptr,
 			"%s: value not given (%s:%d)",
 			td->name, __FILE__, __LINE__);
 		return -1;
 	}
-
+	
 	/* Determine the number of elements */
 	size = _A_CSEQUENCE_FROM_VOID(sptr)->count;
-
+	
 	if((size >= 1UL && size <= 256UL)) {
 		/* Perform validation of the inner elements */
 		return SEQUENCE_OF_constraint(td, sptr, ctfailcb, app_key);
@@ -665,17 +665,17 @@ static int
 asn1c_collection_constraint_30(const asn_TYPE_descriptor_t *td, const void *sptr,
 			asn_app_constraint_failed_f *ctfailcb, void *app_key) {
 	size_t size;
-
+	
 	if(!sptr) {
 		ASN__CTFAIL(app_key, td, sptr,
 			"%s: value not given (%s:%d)",
 			td->name, __FILE__, __LINE__);
 		return -1;
 	}
-
+	
 	/* Determine the number of elements */
 	size = _A_CSEQUENCE_FROM_VOID(sptr)->count;
-
+	
 	if((size >= 1UL && size <= 256UL)) {
 		/* Perform validation of the inner elements */
 		return SEQUENCE_OF_constraint(td, sptr, ctfailcb, app_key);

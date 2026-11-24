@@ -165,10 +165,8 @@ main(void) {
         static const uint8_t expected[] = {0x07, 0x83, 0xff};
         memset(&choice, 0, sizeof(choice));
         choice.n = 7;
-        choice.c = calloc(1, sizeof(*choice.c));
-        assert(choice.c);
-        choice.c->present = ExtChoice_PR_root;
-        choice.c->choice.root = 1;
+        choice.c.present = ExtChoice_PR_root;
+        choice.c.choice.root = 1;
         result = oer_encode_to_buffer(&asn_DEF_ExtChoiceSet, 0, &choice, encoded, sizeof(encoded));
         assert(result.encoded == (ssize_t)sizeof(expected));
         assert(memcmp(encoded, expected, sizeof(expected)) == 0);

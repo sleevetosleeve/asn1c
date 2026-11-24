@@ -12,7 +12,7 @@ struct Tree;
 
 typedef struct Forest {
 	A_SET_OF(struct Tree) list;
-
+	
 	/* Context for parsing across buffer boundaries */
 	asn_struct_ctx_t _asn_ctx;
 } Forest_t;
@@ -97,7 +97,7 @@ asn_TYPE_descriptor_t asn_DEF_Forest = {
 typedef struct Tree {
 	long	 height;
 	long	 width;
-
+	
 	/* Context for parsing across buffer boundaries */
 	asn_struct_ctx_t _asn_ctx;
 } Tree_t;
@@ -235,7 +235,7 @@ typedef struct Stuff__anything__anything_Member {
 	 * This type is extensible,
 	 * possible extensions are below.
 	 */
-
+	
 	/* Context for parsing across buffer boundaries */
 	asn_struct_ctx_t _asn_ctx;
 } Stuff__anything__anything_Member;
@@ -245,13 +245,13 @@ typedef struct Stuff__anything__anything_Member {
 typedef struct Stuff {
 	struct Stuff__trees {
 		A_SET_OF(struct Forest) list;
-
+		
 		/* Context for parsing across buffer boundaries */
 		asn_struct_ctx_t _asn_ctx;
 	} *trees;
 	struct Stuff__anything {
 		A_SET_OF(Stuff__anything__anything_Member) list;
-
+		
 		/* Context for parsing across buffer boundaries */
 		asn_struct_ctx_t _asn_ctx;
 	} *anything;
@@ -265,15 +265,15 @@ typedef struct Stuff {
 			long	 a;
 			long	 b;
 		} choice;
-
+		
 		/* Context for parsing across buffer boundaries */
 		asn_struct_ctx_t _asn_ctx;
 	} *other;
-
+	
 	/* Presence bitmask: ASN_SET_ISPRESENT(pStuff, Stuff_PR_x) */
 	unsigned int _presence_map
 		[((3+(8*sizeof(unsigned int))-1)/(8*sizeof(unsigned int)))];
-
+	
 	/* Context for parsing across buffer boundaries */
 	asn_struct_ctx_t _asn_ctx;
 } Stuff_t;
@@ -670,7 +670,7 @@ static const uint8_t asn_MAP_Stuff_mmap_6[(3 + (8 * sizeof(unsigned int)) - 1) /
 };
 static const unsigned asn_MAP_Stuff_root_6[2] = {0, 1};
 static const unsigned asn_MAP_Stuff_extension_6[1] = {2};
-static
+static 
 asn_SET_specifics_t asn_SPC_Stuff_specs_6 = {
 	sizeof(struct Stuff),
 	offsetof(struct Stuff, _asn_ctx),
@@ -751,11 +751,11 @@ typedef struct EXTERNAL {
 			OCTET_STRING_t	 octet_aligned;
 			BIT_STRING_t	 arbitrary;
 		} choice;
-
+		
 		/* Context for parsing across buffer boundaries */
 		asn_struct_ctx_t _asn_ctx;
 	} encoding;
-
+	
 	/* Context for parsing across buffer boundaries */
 	asn_struct_ctx_t _asn_ctx;
 } EXTERNAL_t;

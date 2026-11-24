@@ -1506,16 +1506,13 @@ asn_TYPE_descriptor_t asn_DEF_PayloadSetOf = {
 #include <OCTET_STRING.h>
 #include "AllNamedPayload.h"
 #include "PrefixedPayload.h"
+#include "NestedPayload.h"
+#include "NestedSet.h"
+#include "PayloadChoice.h"
+#include "PayloadSeqOf.h"
+#include "PayloadSetOf.h"
 #include <NativeInteger.h>
 #include <constr_SEQUENCE.h>
-
-/*** <<< FWD-DECLS [Message] >>> ***/
-
-struct NestedPayload;
-struct NestedSet;
-struct PayloadChoice;
-struct PayloadSeqOf;
-struct PayloadSetOf;
 
 /*** <<< TYPE-DECLS [Message] >>> ***/
 
@@ -1523,11 +1520,11 @@ typedef struct Message {
 	OCTET_STRING_t	 payload;
 	AllNamedPayload_t	 named;
 	PrefixedPayload_t	 prefixed;
-	struct NestedPayload	*nested;
-	struct NestedSet	*nestedSet;
-	struct PayloadChoice	*choice;
-	struct PayloadSeqOf	*seqOf;
-	struct PayloadSetOf	*setOf;
+	NestedPayload_t	 nested;
+	NestedSet_t	 nestedSet;
+	PayloadChoice_t	 choice;
+	PayloadSeqOf_t	 seqOf;
+	PayloadSetOf_t	 setOf;
 	long	 count;
 	
 	/* Context for parsing across buffer boundaries */
@@ -1538,14 +1535,6 @@ typedef struct Message {
 
 /* extern asn_TYPE_descriptor_t asn_DEF_payload_16;	// (Use -fall-defs-global to expose) */
 extern asn_TYPE_descriptor_t asn_DEF_Message;
-
-/*** <<< POST-INCLUDE [Message] >>> ***/
-
-#include "NestedPayload.h"
-#include "NestedSet.h"
-#include "PayloadChoice.h"
-#include "PayloadSeqOf.h"
-#include "PayloadSetOf.h"
 
 /*** <<< CODE [Message] >>> ***/
 
@@ -1752,7 +1741,7 @@ static asn_TYPE_member_t asn_MBR_Message_15[] = {
 		0, 0, /* No default value */
 		.name = "prefixed"
 		},
-	{ ATF_POINTER, 0, offsetof(struct Message, nested),
+	{ ATF_NOFLAGS, 0, offsetof(struct Message, nested),
 		.tag = (ASN_TAG_CLASS_CONTEXT | (3 << 2)),
 		.tag_mode = -1,	/* IMPLICIT tag at current level */
 		.type = &asn_DEF_NestedPayload,
@@ -1772,7 +1761,7 @@ static asn_TYPE_member_t asn_MBR_Message_15[] = {
 		0, 0, /* No default value */
 		.name = "nested"
 		},
-	{ ATF_POINTER, 0, offsetof(struct Message, nestedSet),
+	{ ATF_NOFLAGS, 0, offsetof(struct Message, nestedSet),
 		.tag = (ASN_TAG_CLASS_CONTEXT | (4 << 2)),
 		.tag_mode = -1,	/* IMPLICIT tag at current level */
 		.type = &asn_DEF_NestedSet,
@@ -1792,7 +1781,7 @@ static asn_TYPE_member_t asn_MBR_Message_15[] = {
 		0, 0, /* No default value */
 		.name = "nestedSet"
 		},
-	{ ATF_POINTER, 0, offsetof(struct Message, choice),
+	{ ATF_NOFLAGS, 0, offsetof(struct Message, choice),
 		.tag = (ASN_TAG_CLASS_CONTEXT | (5 << 2)),
 		.tag_mode = +1,	/* EXPLICIT tag at current level */
 		.type = &asn_DEF_PayloadChoice,
@@ -1812,7 +1801,7 @@ static asn_TYPE_member_t asn_MBR_Message_15[] = {
 		0, 0, /* No default value */
 		.name = "choice"
 		},
-	{ ATF_POINTER, 0, offsetof(struct Message, seqOf),
+	{ ATF_NOFLAGS, 0, offsetof(struct Message, seqOf),
 		.tag = (ASN_TAG_CLASS_CONTEXT | (6 << 2)),
 		.tag_mode = -1,	/* IMPLICIT tag at current level */
 		.type = &asn_DEF_PayloadSeqOf,
@@ -1832,7 +1821,7 @@ static asn_TYPE_member_t asn_MBR_Message_15[] = {
 		0, 0, /* No default value */
 		.name = "seqOf"
 		},
-	{ ATF_POINTER, 0, offsetof(struct Message, setOf),
+	{ ATF_NOFLAGS, 0, offsetof(struct Message, setOf),
 		.tag = (ASN_TAG_CLASS_CONTEXT | (7 << 2)),
 		.tag_mode = -1,	/* IMPLICIT tag at current level */
 		.type = &asn_DEF_PayloadSetOf,

@@ -122,11 +122,10 @@ check_seq_skip(void) {
 
     fprintf(stderr, "SEQ skip: code=%d consumed=%zu\n", dr.code, dr.consumed);
     assert(dr.code == RC_OK);
-    assert(m->inner != 0);
-    fprintf(stderr, "SEQ skip: a=%ld x=%ld b=%ld\n", m->a, m->inner->x, m->b);
+    fprintf(stderr, "SEQ skip: a=%ld x=%ld b=%ld\n", m->a, m->inner.x, m->b);
     assert(dr.consumed == sizeof(v2_seq));
     assert(m->a == 1);
-    assert(m->inner->x == 2);
+    assert(m->inner.x == 2);
     assert(m->b == 4);  /* Unfixed #14 misdecodes b as 3 (the y payload) */
 
     ASN_STRUCT_FREE(asn_DEF_M, m);
@@ -142,12 +141,11 @@ check_seq_skip_two_extensions(void) {
     fprintf(stderr, "SEQ skip x2: code=%d consumed=%zu\n",
             dr.code, dr.consumed);
     assert(dr.code == RC_OK);
-    assert(m->inner != 0);
     fprintf(stderr, "SEQ skip x2: a=%ld x=%ld b=%ld\n",
-            m->a, m->inner->x, m->b);
+            m->a, m->inner.x, m->b);
     assert(dr.consumed == sizeof(v3_seq));
     assert(m->a == 1);
-    assert(m->inner->x == 2);
+    assert(m->inner.x == 2);
     assert(m->b == 4);
 
     ASN_STRUCT_FREE(asn_DEF_M, m);
@@ -220,12 +218,11 @@ check_choice_skip_nested(void) {
 
     fprintf(stderr, "MC skip: code=%d consumed=%zu\n", dr.code, dr.consumed);
     assert(dr.code == RC_OK);
-    assert(mc->c != 0);
     fprintf(stderr, "MC skip: pre=%ld present=%d post=%ld\n",
-            mc->pre, (int)mc->c->present, mc->post);
+            mc->pre, (int)mc->c.present, mc->post);
     assert(dr.consumed == sizeof(v2_mc));
     assert(mc->pre == 1);
-    assert(mc->c->present == C_PR_NOTHING);
+    assert(mc->c.present == C_PR_NOTHING);
     assert(mc->post == 4);
 
     ASN_STRUCT_FREE(asn_DEF_MC, mc);
@@ -273,7 +270,7 @@ check_v1_encode_interop(void) {
         asn_enc_rval_t er;
         memset(&m, 0, sizeof(m));
         memset(&inner, 0, sizeof(inner));
-        m.a = 1; inner.x = 2; m.inner = &inner; m.b = 4;
+        m.a = 1; inner.x = 2; m.inner = inner; m.b = 4;
         er = oer_encode_to_buffer(&asn_DEF_M, 0, &m, buf, sizeof(buf));
         fprintf(stderr, "v1 M encode: encoded=%zd\n", er.encoded);
         assert(er.encoded == (ssize_t)sizeof(v1_seq));
@@ -288,7 +285,7 @@ check_v1_encode_interop(void) {
         mc.pre = 1;
         c.present = C_PR_c1;
         c.choice.c1 = 7;
-        mc.c = &c;
+        mc.c = c;
         mc.post = 4;
         er = oer_encode_to_buffer(&asn_DEF_MC, 0, &mc, buf, sizeof(buf));
         fprintf(stderr, "v1 MC encode: encoded=%zd\n", er.encoded);

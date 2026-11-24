@@ -1,6 +1,8 @@
 
 /*** <<< INCLUDES [ChoiceField] >>> ***/
 
+#include "SeqA.h"
+#include "SeqB.h"
 #include <constr_CHOICE.h>
 
 /*** <<< DEPS [ChoiceField] >>> ***/
@@ -11,18 +13,13 @@ typedef enum ChoiceField_PR {
 	ChoiceField_PR_seqB
 } ChoiceField_PR;
 
-/*** <<< FWD-DECLS [ChoiceField] >>> ***/
-
-struct SeqA;
-struct SeqB;
-
 /*** <<< TYPE-DECLS [ChoiceField] >>> ***/
 
 typedef struct ChoiceField {
 	ChoiceField_PR present;
 	union ChoiceField_u {
-		struct SeqA	*seqA;
-		struct SeqB	*seqB;
+		SeqA_t	 seqA;
+		SeqB_t	 seqB;
 	} choice;
 	
 	/* Context for parsing across buffer boundaries */
@@ -33,15 +30,10 @@ typedef struct ChoiceField {
 
 extern asn_TYPE_descriptor_t asn_DEF_ChoiceField;
 
-/*** <<< POST-INCLUDE [ChoiceField] >>> ***/
-
-#include "SeqA.h"
-#include "SeqB.h"
-
 /*** <<< STAT-DEFS [ChoiceField] >>> ***/
 
 static asn_TYPE_member_t asn_MBR_ChoiceField_1[] = {
-	{ ATF_POINTER, 0, offsetof(struct ChoiceField, choice.seqA),
+	{ ATF_NOFLAGS, 0, offsetof(struct ChoiceField, choice.seqA),
 		.tag = (ASN_TAG_CLASS_CONTEXT | (0 << 2)),
 		.tag_mode = -1,	/* IMPLICIT tag at current level */
 		.type = &asn_DEF_SeqA,
@@ -61,7 +53,7 @@ static asn_TYPE_member_t asn_MBR_ChoiceField_1[] = {
 		0, 0, /* No default value */
 		.name = "seqA"
 		},
-	{ ATF_POINTER, 0, offsetof(struct ChoiceField, choice.seqB),
+	{ ATF_NOFLAGS, 0, offsetof(struct ChoiceField, choice.seqB),
 		.tag = (ASN_TAG_CLASS_CONTEXT | (1 << 2)),
 		.tag_mode = -1,	/* IMPLICIT tag at current level */
 		.type = &asn_DEF_SeqB,

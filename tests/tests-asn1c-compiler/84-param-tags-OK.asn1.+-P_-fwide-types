@@ -236,6 +236,7 @@ asn_TYPE_descriptor_t asn_DEF_TestType_16P1 = {
 
 /*** <<< INCLUDES [TestChoice] >>> ***/
 
+#include "TestType.h"
 #include <constr_CHOICE.h>
 
 /*** <<< DEPS [TestChoice] >>> ***/
@@ -246,18 +247,13 @@ typedef enum TestChoice_PR {
 	TestChoice_PR_type2
 } TestChoice_PR;
 
-/*** <<< FWD-DECLS [TestChoice] >>> ***/
-
-struct TestType_16P0;
-struct TestType_16P1;
-
 /*** <<< TYPE-DECLS [TestChoice] >>> ***/
 
 typedef struct TestChoice {
 	TestChoice_PR present;
 	union TestChoice_u {
-		struct TestType_16P0	*type1;
-		struct TestType_16P1	*type2;
+		TestType_16P0_t	 type1;
+		TestType_16P1_t	 type2;
 	} choice;
 	
 	/* Context for parsing across buffer boundaries */
@@ -268,14 +264,10 @@ typedef struct TestChoice {
 
 extern asn_TYPE_descriptor_t asn_DEF_TestChoice;
 
-/*** <<< POST-INCLUDE [TestChoice] >>> ***/
-
-#include "TestType.h"
-
 /*** <<< STAT-DEFS [TestChoice] >>> ***/
 
 static asn_TYPE_member_t asn_MBR_TestChoice_5[] = {
-	{ ATF_POINTER, 0, offsetof(struct TestChoice, choice.type1),
+	{ ATF_NOFLAGS, 0, offsetof(struct TestChoice, choice.type1),
 		.tag = (ASN_TAG_CLASS_UNIVERSAL | (16 << 2)),
 		.tag_mode = 0,
 		.type = &asn_DEF_TestType_16P0,
@@ -295,7 +287,7 @@ static asn_TYPE_member_t asn_MBR_TestChoice_5[] = {
 		0, 0, /* No default value */
 		.name = "type1"
 		},
-	{ ATF_POINTER, 0, offsetof(struct TestChoice, choice.type2),
+	{ ATF_NOFLAGS, 0, offsetof(struct TestChoice, choice.type2),
 		.tag = (ASN_TAG_CLASS_CONTEXT | (0 << 2)),
 		.tag_mode = -1,	/* IMPLICIT tag at current level */
 		.type = &asn_DEF_TestType_16P1,
@@ -572,6 +564,7 @@ asn_TYPE_descriptor_t asn_DEF_AutoType_34P1 = {
 
 /*** <<< INCLUDES [AutoChoice] >>> ***/
 
+#include "AutoType.h"
 #include <constr_CHOICE.h>
 
 /*** <<< DEPS [AutoChoice] >>> ***/
@@ -582,18 +575,13 @@ typedef enum AutoChoice_PR {
 	AutoChoice_PR_type2
 } AutoChoice_PR;
 
-/*** <<< FWD-DECLS [AutoChoice] >>> ***/
-
-struct AutoType_34P0;
-struct AutoType_34P1;
-
 /*** <<< TYPE-DECLS [AutoChoice] >>> ***/
 
 typedef struct AutoChoice {
 	AutoChoice_PR present;
 	union AutoChoice_u {
-		struct AutoType_34P0	*type1;
-		struct AutoType_34P1	*type2;
+		AutoType_34P0_t	 type1;
+		AutoType_34P1_t	 type2;
 	} choice;
 	
 	/* Context for parsing across buffer boundaries */
@@ -604,14 +592,10 @@ typedef struct AutoChoice {
 
 extern asn_TYPE_descriptor_t asn_DEF_AutoChoice;
 
-/*** <<< POST-INCLUDE [AutoChoice] >>> ***/
-
-#include "AutoType.h"
-
 /*** <<< STAT-DEFS [AutoChoice] >>> ***/
 
 static asn_TYPE_member_t asn_MBR_AutoChoice_12[] = {
-	{ ATF_POINTER, 0, offsetof(struct AutoChoice, choice.type1),
+	{ ATF_NOFLAGS, 0, offsetof(struct AutoChoice, choice.type1),
 		.tag = (ASN_TAG_CLASS_CONTEXT | (0 << 2)),
 		.tag_mode = -1,	/* IMPLICIT tag at current level */
 		.type = &asn_DEF_AutoType_34P0,
@@ -631,7 +615,7 @@ static asn_TYPE_member_t asn_MBR_AutoChoice_12[] = {
 		0, 0, /* No default value */
 		.name = "type1"
 		},
-	{ ATF_POINTER, 0, offsetof(struct AutoChoice, choice.type2),
+	{ ATF_NOFLAGS, 0, offsetof(struct AutoChoice, choice.type2),
 		.tag = (ASN_TAG_CLASS_CONTEXT | (1 << 2)),
 		.tag_mode = -1,	/* IMPLICIT tag at current level */
 		.type = &asn_DEF_AutoType_34P1,
