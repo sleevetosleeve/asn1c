@@ -5584,11 +5584,43 @@ emit_member_layout(arg_t *arg, asn1p_expr_t *expr, asn1c_ioc_table_and_objset_t 
 }
 
 /*
+ * Purpose: Detect an inline REAL member that is stored in a C float.
+ * Original source: asn1c C backend member descriptor selection.
+ * Parameters: expr is the member.
+ * Returns: Nonzero when the member is a non-reference REAL whose constraints
+ *          narrow it to float32, zero otherwise.
+ * Errors: None; arguments follow the internal compiler contract.
+ * Responsible party: asn1c maintainers.
+ * History: Added for issue #5. Such a member occupies a 4-byte field, while
+ *          the generic &asn_DEF_REAL / &asn_DEF_NativeReal descriptors use the
+ *          8-byte double layout, so the member must reference its own
+ *          per-field descriptor, which carries the float32 NativeReal
+ *          specifics. References (A1TC_REFERENCE) are excluded: they point at
+ *          the referenced type's descriptor, which already holds any
+ *          specifics.
+ */
+static int
+member_real_fits_float32(asn1p_expr_t *expr) {
+	asn1cnst_range_t *range;
+	int fits;
+	/* Anonymous SEQUENCE OF elements take the contained-type path, which
+	 * references the generic descriptor; only named members are covered. */
+	if(expr->expr_type != ASN_BASIC_REAL || expr->_anonymous_type)
+		return 0;
+	range = asn1constraint_compute_OER_range(expr->Identifier, ASN_BASIC_REAL,
+		expr->combined_constraints, ACT_EL_RANGE, 0, 0, 0);
+	fits = (range && range->narrowing == NARROW_FLOAT32);
+	asn1constraint_range_free(range);
+	return fits;
+}
+
+/*
  * Purpose: Identify members that need a concrete descriptor.
  * Original source: asn1c C backend member descriptor selection.
  * Version: 2026-10-22.
  * Parameters: arg is the generation context; expr is the member; opt_ioc is its IOC table;
- *             fits_unsigned_integer indicates inline native INTEGER specifics.
+ *             fits_unsigned_integer indicates inline native INTEGER specifics;
+ *             fits_float32 indicates an inline REAL stored as C float.
  * Returns: Nonzero when the descriptor property applies, zero otherwise.
  * Errors: None; arguments follow the internal compiler contract.
  * Responsible party: asn1c maintainers.
@@ -5597,7 +5629,8 @@ emit_member_layout(arg_t *arg, asn1p_expr_t *expr, asn1c_ioc_table_and_objset_t 
  */
 static int
 member_uses_concrete_descriptor(arg_t *arg, asn1p_expr_t *expr,
-    asn1c_ioc_table_and_objset_t *opt_ioc, int fits_unsigned_integer) {
+    asn1c_ioc_table_and_objset_t *opt_ioc, int fits_unsigned_integer,
+    int fits_float32) {
     /* Match the descriptor naming policy used when its definition is emitted. */
 	return
 		is_open_type(arg, expr, opt_ioc)
@@ -5606,6 +5639,7 @@ member_uses_concrete_descriptor(arg_t *arg, asn1p_expr_t *expr,
 		|| (expr->expr_type & ASN_CONSTR_MASK)
 		|| expr->expr_type == ASN_BASIC_ENUMERATED
 		|| fits_unsigned_integer
+		|| fits_float32
 		|| (expr->expr_type == ASN_BASIC_BIT_STRING
 			&& expr_elements_count(arg, expr));
 
@@ -5616,17 +5650,20 @@ member_uses_concrete_descriptor(arg_t *arg, asn1p_expr_t *expr,
  * Original source: asn1c C backend member descriptor selection.
  * Version: 2026-10-25.
  * Parameters: arg is the generation context; expr is the member; opt_ioc is its IOC table;
- *             fits_unsigned_integer indicates inline native INTEGER specifics.
+ *             fits_unsigned_integer indicates inline native INTEGER specifics;
+ *             fits_float32 indicates an inline REAL stored as C float.
  * Returns: Nonzero when the descriptor property applies, zero otherwise.
  * Errors: None; arguments follow the internal compiler contract.
  * Responsible party: asn1c maintainers.
  * History: Extracted during issue #586; issue #590 added native INTEGER
- *          members to the embedded descriptor suffix rule.
+ *          members to the embedded descriptor suffix rule; issue #5 added
+ *          float-stored inline REAL members to both rules.
  * Example: A constrained inline INTEGER stored as uint64_t uses its suffixed descriptor.
  */
 static int
 member_uses_descriptor_suffix(arg_t *arg, asn1p_expr_t *expr,
-    asn1c_ioc_table_and_objset_t *opt_ioc, int fits_unsigned_integer) {
+    asn1c_ioc_table_and_objset_t *opt_ioc, int fits_unsigned_integer,
+    int fits_float32) {
     /* Match the descriptor naming policy used when its definition is emitted. */
 	return (is_open_type(arg, expr, opt_ioc)
 		   || (arg->flags & A1C_ALL_DEFS_GLOBAL)
@@ -5636,6 +5673,7 @@ member_uses_descriptor_suffix(arg_t *arg, asn1p_expr_t *expr,
 		       && ((expr->expr_type & ASN_CONSTR_MASK)
 		           || expr->expr_type == ASN_BASIC_ENUMERATED
 		           || fits_unsigned_integer
+		           || fits_float32
 		           || (expr->expr_type == ASN_BASIC_BIT_STRING
 		               && expr_elements_count(arg, expr))))
 		   || (expr->_anonymous_type && fits_unsigned_integer));
@@ -5658,6 +5696,7 @@ emit_member_descriptor(arg_t *arg, asn1p_expr_t *expr,
                        asn1c_ioc_table_and_objset_t *opt_ioc,
                        int suffix_index) {
 	int fits_unsigned_integer;
+	int fits_float32;
 	int complex_contents;
 
 	{
@@ -5668,8 +5707,12 @@ emit_member_descriptor(arg_t *arg, asn1p_expr_t *expr,
 			(expr->expr_type == ASN_BASIC_INTEGER)
 			&& asn1c_int_native_specifics(arg, expr, &_w, &_u);
 	}
+	/* Inline float-stored REAL members carry their own float32 specifics;
+	 * references point at the referenced type's descriptor instead. */
+	fits_float32 = member_real_fits_float32(expr);
 
-	complex_contents = member_uses_concrete_descriptor(arg, expr, opt_ioc, fits_unsigned_integer);
+	complex_contents = member_uses_concrete_descriptor(arg, expr, opt_ioc,
+		fits_unsigned_integer, fits_float32);
 
 	if(C99_MODE) OUT(".type = ");
 	/*
@@ -5692,7 +5735,8 @@ emit_member_descriptor(arg_t *arg, asn1p_expr_t *expr,
 		 * generation, so arg->embed is back to 0 even though the type descriptor
 		 * was generated with static storage.
 		 */
-		if(member_uses_descriptor_suffix(arg, expr, opt_ioc, fits_unsigned_integer)) {
+		if(member_uses_descriptor_suffix(arg, expr, opt_ioc,
+			fits_unsigned_integer, fits_float32)) {
 			OUT("_%d", suffix_index);
 		}
 		OUT(",\n");
@@ -6517,6 +6561,17 @@ emit_include_dependencies(arg_t *arg) {
 			                        memb->reference->comp_count - 1].name[0] == '&');
 			GEN_POS_INCLUDE_BASE((memb->marker.flags & EM_UNRECURSE) && !is_ioc_field ?
 					OT_POST_INCLUDE : OT_INCLUDES, memb);
+			/* An inline float-stored REAL member gets its own per-field
+			 * descriptor in the .c file, which uses the NativeReal machinery
+			 * (asn_NativeReal_specifics_t, asn_OP_NativeReal). The member's
+			 * SAFE include name resolves to REAL.h here, so NativeReal.h
+			 * must be added explicitly to the .c (POST_INCLUDE). */
+			if(member_real_fits_float32(memb)) {
+				if(arg->flags & A1C_INCLUDES_QUOTED)
+					GEN_POSTINCLUDE("\"NativeReal.h\"");
+				else
+					GEN_POSTINCLUDE("<NativeReal.h>");
+			}
 		}
 	}
 
