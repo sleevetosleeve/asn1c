@@ -53,10 +53,11 @@ static struct tm *gmtime_r(const time_t *tloc, struct tm *result) {
  */
 #if defined(__FreeBSD__) || defined(__OpenBSD__)    \
 	|| (defined(__GNUC__) && defined(__APPLE_CC__))	\
-	|| (defined __GLIBC__ && __GLIBC__ >= 2)
+	|| (defined __GLIBC__ && __GLIBC__ >= 2)	\
+	|| defined(__ANDROID__)
 #undef	HAVE_TM_GMTOFF
 #define	HAVE_TM_GMTOFF
-#endif	/* BSDs and newer glibc */
+#endif	/* BSDs, newer glibc and Android (bionic) */
 
 /*
  * Where to look for offset from GMT, Phase II.
