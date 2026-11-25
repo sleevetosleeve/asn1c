@@ -2458,7 +2458,15 @@ asn1c_lang_C_type_SIMPLE_TYPE(arg_t *arg) {
 		&& expr_elements_count(arg, expr)
 		&& expr->encoding_control.encoding_type == EC_XER_TEXT)
 	|| fits_unsigned_integer
-	|| asn1c_REAL_fits(arg, expr) == RL_FITS_FLOAT32
+	/*
+	 * An embedded member that merely references a float-mapped REAL type
+	 * defers to the referenced type's descriptor, which already holds the
+	 * float override; a per-member copy would be dead code. A top-level
+	 * reference assignment (Type1 ::= Type2(WITH COMPONENTS ...)) has no
+	 * such descriptor to defer to and keeps its own.
+	 */
+	|| ((!arg->embed || expr->expr_type != A1TC_REFERENCE)
+		&& asn1c_REAL_fits(arg, expr) == RL_FITS_FLOAT32)
 	|| (expr->expr_type == ASN_BASIC_BIT_STRING
 		&& expr_elements_count(arg, expr))
 	)
@@ -6402,7 +6410,7 @@ emit_type_DEF(arg_t *arg, asn1p_expr_t *expr, enum tvm_compat tv_mode,
 	 * that aliases the concrete symbol we just defined in this TU
 	 * (asn_DEF_<UserType>_<index>) when inner defs are hidden.
 	 * Only for named (non-anonymous) types.
-	 * 
+	 *
 	 * Skip generating the weak alias if the identifier collides with an ancestor's
 	 * identifier, or occurs more than once anywhere in this compilation unit
 	 * (e.g. same-named siblings/cousins under -fcompound-names), as this would
