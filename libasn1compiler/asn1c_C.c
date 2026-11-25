@@ -6411,24 +6411,33 @@ emit_type_DEF(arg_t *arg, asn1p_expr_t *expr, enum tvm_compat tv_mode,
 	 * (asn_DEF_<UserType>_<index>) when inner defs are hidden.
 	 * Only for named (non-anonymous) types.
 	 *
-	 * Skip generating the weak alias if the identifier collides with an ancestor's
-	 * identifier, or occurs more than once anywhere in this compilation unit
-	 * (e.g. same-named siblings/cousins under -fcompound-names), as this would
-	 * create multiple definitions of the same alias symbol: clang rejects that
-	 * outright, and the fallback path would select the wrong type descriptor
-	 * at runtime.
+	 * Emit the alias under the name the clash registry has checked for this
+	 * expression, c_name(arg).base_name: under -fcompound-names member-level
+	 * descriptors carry compound names (A__i), while the bare member
+	 * identifier (MKID) is not what the registry recorded for these kinds and
+	 * could silently collide with an identical member of a sibling
+	 * translation unit.
+	 *
+	 * Skip generating the weak alias if the identifier collides with an
+	 * ancestor's identifier, or occurs more than once anywhere in this
+	 * compilation unit (e.g. same-named siblings/cousins under
+	 * -fcompound-names), as this would create multiple definitions of the
+	 * same alias symbol: clang rejects that outright, and the fallback path
+	 * would select the wrong type descriptor at runtime.
 	 */
 	if(!expr->_anonymous_type && HIDE_INNER_DEFS
 	    && !identifier_collides_with_ancestor(expr)
 	    && !identifier_ambiguous_in_unit(expr)) {
 		int saved_target2 = arg->target->target;
+		const char *registered_name = c_name(arg).base_name;
+		const char *name_prefix = asn1c_prefix_get();
 		REDIR(OT_CODE);
 
 		OUT("#ifndef ASN1C_NO_UNSUFFIXED_PDU_ALIAS\n");
 		OUT("#if defined(__ELF__) && (defined(__GNUC__) || defined(__clang__))\n");
 		/* Use extern weak alias to work with static targets without storage class mismatch */
-		OUT("extern asn_TYPE_descriptor_t asn_DEF_%s __attribute__((weak, alias(\"asn_DEF_%s_%d\")));\n",
-		    MKID(expr), MKID(expr), expr->_type_unique_index);
+		OUT("extern asn_TYPE_descriptor_t asn_DEF_%s%s __attribute__((weak, alias(\"asn_DEF_%s_%d\")));\n",
+		    name_prefix, registered_name, MKID(expr), expr->_type_unique_index);
 		OUT("#else\n");
 		
 		/* Forward declaration must match the storage class of the actual definition */
@@ -6440,10 +6449,11 @@ emit_type_DEF(arg_t *arg, asn1p_expr_t *expr, enum tvm_compat tv_mode,
 			    MKID(expr), expr->_type_unique_index);
 		}
 				
-		OUT("static asn_TYPE_descriptor_t asn_DEF_%s;\n", MKID(expr));
+		OUT("static asn_TYPE_descriptor_t asn_DEF_%s%s;\n", name_prefix, registered_name);
 		OUT("__attribute__((constructor)) static void asn_DEF_%s_%d_alias_init(void) {\n",
 		    MKID(expr), expr->_type_unique_index);
-		OUT("\tasn_DEF_%s = asn_DEF_%s_%d;\n", MKID(expr), MKID(expr), expr->_type_unique_index);
+		OUT("\tasn_DEF_%s%s = asn_DEF_%s_%d;\n", name_prefix, registered_name,
+		    MKID(expr), expr->_type_unique_index);
 		OUT("}\n");
 		OUT("#endif\n");
 		OUT("#endif /* ASN1C_NO_UNSUFFIXED_PDU_ALIAS */\n");

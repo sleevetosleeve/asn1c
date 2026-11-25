@@ -370,12 +370,12 @@ extern asn_TYPE_member_t asn_MBR_Choice_1_8[4];
 
 #ifndef ASN1C_NO_UNSUFFIXED_PDU_ALIAS
 #if defined(__ELF__) && (defined(__GNUC__) || defined(__clang__))
-extern asn_TYPE_descriptor_t asn_DEF_or __attribute__((weak, alias("asn_DEF_or_10")));
+extern asn_TYPE_descriptor_t asn_DEF_Or __attribute__((weak, alias("asn_DEF_or_10")));
 #else
 static asn_TYPE_descriptor_t asn_DEF_or_10;
-static asn_TYPE_descriptor_t asn_DEF_or;
+static asn_TYPE_descriptor_t asn_DEF_Or;
 __attribute__((constructor)) static void asn_DEF_or_10_alias_init(void) {
-	asn_DEF_or = asn_DEF_or_10;
+	asn_DEF_Or = asn_DEF_or_10;
 }
 #endif
 #endif /* ASN1C_NO_UNSUFFIXED_PDU_ALIAS */

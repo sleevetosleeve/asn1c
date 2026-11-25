@@ -666,12 +666,12 @@ extern asn_TYPE_descriptor_t asn_DEF_EXTERNAL;
 
 #ifndef ASN1C_NO_UNSUFFIXED_PDU_ALIAS
 #if defined(__ELF__) && (defined(__GNUC__) || defined(__clang__))
-extern asn_TYPE_descriptor_t asn_DEF_encoding __attribute__((weak, alias("asn_DEF_encoding_32")));
+extern asn_TYPE_descriptor_t asn_DEF_EXTERNAL__encoding __attribute__((weak, alias("asn_DEF_encoding_32")));
 #else
 static asn_TYPE_descriptor_t asn_DEF_encoding_32;
-static asn_TYPE_descriptor_t asn_DEF_encoding;
+static asn_TYPE_descriptor_t asn_DEF_EXTERNAL__encoding;
 __attribute__((constructor)) static void asn_DEF_encoding_32_alias_init(void) {
-	asn_DEF_encoding = asn_DEF_encoding_32;
+	asn_DEF_EXTERNAL__encoding = asn_DEF_encoding_32;
 }
 #endif
 #endif /* ASN1C_NO_UNSUFFIXED_PDU_ALIAS */

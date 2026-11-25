@@ -47,12 +47,12 @@ extern asn_TYPE_member_t asn_MBR_Flag_15P1_6[1];
 
 #ifndef ASN1C_NO_UNSUFFIXED_PDU_ALIAS
 #if defined(__ELF__) && (defined(__GNUC__) || defined(__clang__))
-extern asn_TYPE_descriptor_t asn_DEF_field __attribute__((weak, alias("asn_DEF_field_7")));
+extern asn_TYPE_descriptor_t asn_DEF_Flag_15P1__field __attribute__((weak, alias("asn_DEF_field_7")));
 #else
 static asn_TYPE_descriptor_t asn_DEF_field_7;
-static asn_TYPE_descriptor_t asn_DEF_field;
+static asn_TYPE_descriptor_t asn_DEF_Flag_15P1__field;
 __attribute__((constructor)) static void asn_DEF_field_7_alias_init(void) {
-	asn_DEF_field = asn_DEF_field_7;
+	asn_DEF_Flag_15P1__field = asn_DEF_field_7;
 }
 #endif
 #endif /* ASN1C_NO_UNSUFFIXED_PDU_ALIAS */
@@ -473,12 +473,12 @@ extern asn_TYPE_descriptor_t asn_DEF_EXTERNAL;
 
 #ifndef ASN1C_NO_UNSUFFIXED_PDU_ALIAS
 #if defined(__ELF__) && (defined(__GNUC__) || defined(__clang__))
-extern asn_TYPE_descriptor_t asn_DEF_encoding __attribute__((weak, alias("asn_DEF_encoding_28")));
+extern asn_TYPE_descriptor_t asn_DEF_EXTERNAL__encoding __attribute__((weak, alias("asn_DEF_encoding_28")));
 #else
 static asn_TYPE_descriptor_t asn_DEF_encoding_28;
-static asn_TYPE_descriptor_t asn_DEF_encoding;
+static asn_TYPE_descriptor_t asn_DEF_EXTERNAL__encoding;
 __attribute__((constructor)) static void asn_DEF_encoding_28_alias_init(void) {
-	asn_DEF_encoding = asn_DEF_encoding_28;
+	asn_DEF_EXTERNAL__encoding = asn_DEF_encoding_28;
 }
 #endif
 #endif /* ASN1C_NO_UNSUFFIXED_PDU_ALIAS */

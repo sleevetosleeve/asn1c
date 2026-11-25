@@ -290,34 +290,34 @@ extern asn_TYPE_descriptor_t asn_DEF_Stuff;
 
 #ifndef ASN1C_NO_UNSUFFIXED_PDU_ALIAS
 #if defined(__ELF__) && (defined(__GNUC__) || defined(__clang__))
-extern asn_TYPE_descriptor_t asn_DEF_trees __attribute__((weak, alias("asn_DEF_trees_7")));
+extern asn_TYPE_descriptor_t asn_DEF_Stuff__trees __attribute__((weak, alias("asn_DEF_trees_7")));
 #else
 static asn_TYPE_descriptor_t asn_DEF_trees_7;
-static asn_TYPE_descriptor_t asn_DEF_trees;
+static asn_TYPE_descriptor_t asn_DEF_Stuff__trees;
 __attribute__((constructor)) static void asn_DEF_trees_7_alias_init(void) {
-	asn_DEF_trees = asn_DEF_trees_7;
+	asn_DEF_Stuff__trees = asn_DEF_trees_7;
 }
 #endif
 #endif /* ASN1C_NO_UNSUFFIXED_PDU_ALIAS */
 #ifndef ASN1C_NO_UNSUFFIXED_PDU_ALIAS
 #if defined(__ELF__) && (defined(__GNUC__) || defined(__clang__))
-extern asn_TYPE_descriptor_t asn_DEF_anything __attribute__((weak, alias("asn_DEF_anything_9")));
+extern asn_TYPE_descriptor_t asn_DEF_Stuff__anything __attribute__((weak, alias("asn_DEF_anything_9")));
 #else
 static asn_TYPE_descriptor_t asn_DEF_anything_9;
-static asn_TYPE_descriptor_t asn_DEF_anything;
+static asn_TYPE_descriptor_t asn_DEF_Stuff__anything;
 __attribute__((constructor)) static void asn_DEF_anything_9_alias_init(void) {
-	asn_DEF_anything = asn_DEF_anything_9;
+	asn_DEF_Stuff__anything = asn_DEF_anything_9;
 }
 #endif
 #endif /* ASN1C_NO_UNSUFFIXED_PDU_ALIAS */
 #ifndef ASN1C_NO_UNSUFFIXED_PDU_ALIAS
 #if defined(__ELF__) && (defined(__GNUC__) || defined(__clang__))
-extern asn_TYPE_descriptor_t asn_DEF_other __attribute__((weak, alias("asn_DEF_other_14")));
+extern asn_TYPE_descriptor_t asn_DEF_Stuff__other __attribute__((weak, alias("asn_DEF_other_14")));
 #else
 static asn_TYPE_descriptor_t asn_DEF_other_14;
-static asn_TYPE_descriptor_t asn_DEF_other;
+static asn_TYPE_descriptor_t asn_DEF_Stuff__other;
 __attribute__((constructor)) static void asn_DEF_other_14_alias_init(void) {
-	asn_DEF_other = asn_DEF_other_14;
+	asn_DEF_Stuff__other = asn_DEF_other_14;
 }
 #endif
 #endif /* ASN1C_NO_UNSUFFIXED_PDU_ALIAS */
@@ -768,12 +768,12 @@ extern asn_TYPE_descriptor_t asn_DEF_EXTERNAL;
 
 #ifndef ASN1C_NO_UNSUFFIXED_PDU_ALIAS
 #if defined(__ELF__) && (defined(__GNUC__) || defined(__clang__))
-extern asn_TYPE_descriptor_t asn_DEF_encoding __attribute__((weak, alias("asn_DEF_encoding_32")));
+extern asn_TYPE_descriptor_t asn_DEF_EXTERNAL__encoding __attribute__((weak, alias("asn_DEF_encoding_32")));
 #else
 static asn_TYPE_descriptor_t asn_DEF_encoding_32;
-static asn_TYPE_descriptor_t asn_DEF_encoding;
+static asn_TYPE_descriptor_t asn_DEF_EXTERNAL__encoding;
 __attribute__((constructor)) static void asn_DEF_encoding_32_alias_init(void) {
-	asn_DEF_encoding = asn_DEF_encoding_32;
+	asn_DEF_EXTERNAL__encoding = asn_DEF_encoding_32;
 }
 #endif
 #endif /* ASN1C_NO_UNSUFFIXED_PDU_ALIAS */

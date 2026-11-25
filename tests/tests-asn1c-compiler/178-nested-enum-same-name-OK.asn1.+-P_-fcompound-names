@@ -101,12 +101,12 @@ memb_paramCombination_CJT_r18_constraint_4(const asn_TYPE_descriptor_t *td, cons
 
 #ifndef ASN1C_NO_UNSUFFIXED_PDU_ALIAS
 #if defined(__ELF__) && (defined(__GNUC__) || defined(__clang__))
-extern asn_TYPE_descriptor_t asn_DEF_typeII_CJT_r18 __attribute__((weak, alias("asn_DEF_typeII_CJT_r18_4")));
+extern asn_TYPE_descriptor_t asn_DEF_CodebookConfig_r18__codebookType__type2__typeII_CJT_r18 __attribute__((weak, alias("asn_DEF_typeII_CJT_r18_4")));
 #else
 static asn_TYPE_descriptor_t asn_DEF_typeII_CJT_r18_4;
-static asn_TYPE_descriptor_t asn_DEF_typeII_CJT_r18;
+static asn_TYPE_descriptor_t asn_DEF_CodebookConfig_r18__codebookType__type2__typeII_CJT_r18;
 __attribute__((constructor)) static void asn_DEF_typeII_CJT_r18_4_alias_init(void) {
-	asn_DEF_typeII_CJT_r18 = asn_DEF_typeII_CJT_r18_4;
+	asn_DEF_CodebookConfig_r18__codebookType__type2__typeII_CJT_r18 = asn_DEF_typeII_CJT_r18_4;
 }
 #endif
 #endif /* ASN1C_NO_UNSUFFIXED_PDU_ALIAS */
@@ -141,34 +141,34 @@ memb_paramCombination_CJT_PS_r18_constraint_8(const asn_TYPE_descriptor_t *td, c
 
 #ifndef ASN1C_NO_UNSUFFIXED_PDU_ALIAS
 #if defined(__ELF__) && (defined(__GNUC__) || defined(__clang__))
-extern asn_TYPE_descriptor_t asn_DEF_typeII_CJT_PortSelection_r18 __attribute__((weak, alias("asn_DEF_typeII_CJT_PortSelection_r18_8")));
+extern asn_TYPE_descriptor_t asn_DEF_CodebookConfig_r18__codebookType__type2__typeII_CJT_PortSelection_r18 __attribute__((weak, alias("asn_DEF_typeII_CJT_PortSelection_r18_8")));
 #else
 static asn_TYPE_descriptor_t asn_DEF_typeII_CJT_PortSelection_r18_8;
-static asn_TYPE_descriptor_t asn_DEF_typeII_CJT_PortSelection_r18;
+static asn_TYPE_descriptor_t asn_DEF_CodebookConfig_r18__codebookType__type2__typeII_CJT_PortSelection_r18;
 __attribute__((constructor)) static void asn_DEF_typeII_CJT_PortSelection_r18_8_alias_init(void) {
-	asn_DEF_typeII_CJT_PortSelection_r18 = asn_DEF_typeII_CJT_PortSelection_r18_8;
+	asn_DEF_CodebookConfig_r18__codebookType__type2__typeII_CJT_PortSelection_r18 = asn_DEF_typeII_CJT_PortSelection_r18_8;
 }
 #endif
 #endif /* ASN1C_NO_UNSUFFIXED_PDU_ALIAS */
 #ifndef ASN1C_NO_UNSUFFIXED_PDU_ALIAS
 #if defined(__ELF__) && (defined(__GNUC__) || defined(__clang__))
-extern asn_TYPE_descriptor_t asn_DEF_type2 __attribute__((weak, alias("asn_DEF_type2_3")));
+extern asn_TYPE_descriptor_t asn_DEF_CodebookConfig_r18__codebookType__type2 __attribute__((weak, alias("asn_DEF_type2_3")));
 #else
 static asn_TYPE_descriptor_t asn_DEF_type2_3;
-static asn_TYPE_descriptor_t asn_DEF_type2;
+static asn_TYPE_descriptor_t asn_DEF_CodebookConfig_r18__codebookType__type2;
 __attribute__((constructor)) static void asn_DEF_type2_3_alias_init(void) {
-	asn_DEF_type2 = asn_DEF_type2_3;
+	asn_DEF_CodebookConfig_r18__codebookType__type2 = asn_DEF_type2_3;
 }
 #endif
 #endif /* ASN1C_NO_UNSUFFIXED_PDU_ALIAS */
 #ifndef ASN1C_NO_UNSUFFIXED_PDU_ALIAS
 #if defined(__ELF__) && (defined(__GNUC__) || defined(__clang__))
-extern asn_TYPE_descriptor_t asn_DEF_codebookType __attribute__((weak, alias("asn_DEF_codebookType_2")));
+extern asn_TYPE_descriptor_t asn_DEF_CodebookConfig_r18__codebookType __attribute__((weak, alias("asn_DEF_codebookType_2")));
 #else
 static asn_TYPE_descriptor_t asn_DEF_codebookType_2;
-static asn_TYPE_descriptor_t asn_DEF_codebookType;
+static asn_TYPE_descriptor_t asn_DEF_CodebookConfig_r18__codebookType;
 __attribute__((constructor)) static void asn_DEF_codebookType_2_alias_init(void) {
-	asn_DEF_codebookType = asn_DEF_codebookType_2;
+	asn_DEF_CodebookConfig_r18__codebookType = asn_DEF_codebookType_2;
 }
 #endif
 #endif /* ASN1C_NO_UNSUFFIXED_PDU_ALIAS */
@@ -723,12 +723,12 @@ extern asn_TYPE_descriptor_t asn_DEF_EXTERNAL;
 
 #ifndef ASN1C_NO_UNSUFFIXED_PDU_ALIAS
 #if defined(__ELF__) && (defined(__GNUC__) || defined(__clang__))
-extern asn_TYPE_descriptor_t asn_DEF_encoding __attribute__((weak, alias("asn_DEF_encoding_27")));
+extern asn_TYPE_descriptor_t asn_DEF_EXTERNAL__encoding __attribute__((weak, alias("asn_DEF_encoding_27")));
 #else
 static asn_TYPE_descriptor_t asn_DEF_encoding_27;
-static asn_TYPE_descriptor_t asn_DEF_encoding;
+static asn_TYPE_descriptor_t asn_DEF_EXTERNAL__encoding;
 __attribute__((constructor)) static void asn_DEF_encoding_27_alias_init(void) {
-	asn_DEF_encoding = asn_DEF_encoding_27;
+	asn_DEF_EXTERNAL__encoding = asn_DEF_encoding_27;
 }
 #endif
 #endif /* ASN1C_NO_UNSUFFIXED_PDU_ALIAS */

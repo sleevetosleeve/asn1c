@@ -48,12 +48,12 @@ extern asn_TYPE_descriptor_t asn_DEF_T;
 
 #ifndef ASN1C_NO_UNSUFFIXED_PDU_ALIAS
 #if defined(__ELF__) && (defined(__GNUC__) || defined(__clang__))
-extern asn_TYPE_descriptor_t asn_DEF_class __attribute__((weak, alias("asn_DEF_class_4")));
+extern asn_TYPE_descriptor_t asn_DEF_Class __attribute__((weak, alias("asn_DEF_class_4")));
 #else
 static asn_TYPE_descriptor_t asn_DEF_class_4;
-static asn_TYPE_descriptor_t asn_DEF_class;
+static asn_TYPE_descriptor_t asn_DEF_Class;
 __attribute__((constructor)) static void asn_DEF_class_4_alias_init(void) {
-	asn_DEF_class = asn_DEF_class_4;
+	asn_DEF_Class = asn_DEF_class_4;
 }
 #endif
 #endif /* ASN1C_NO_UNSUFFIXED_PDU_ALIAS */
