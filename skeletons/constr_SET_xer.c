@@ -100,14 +100,15 @@ _SET_xer_choice_valid(const asn_CHOICE_specifics_t *specs, const asn_TYPE_member
        || (specs->pres_size != sizeof(char) && specs->pres_size != sizeof(short)
            && specs->pres_size != sizeof(int)) || specs->pres_offset > specs->struct_size
        || specs->pres_size > specs->struct_size - specs->pres_offset
-       || specs->ctx_offset > specs->struct_size
-       || sizeof(asn_struct_ctx_t) > specs->struct_size - specs->ctx_offset
-       || (specs->pres_offset < specs->ctx_offset + sizeof(asn_struct_ctx_t)
+       || !asn_ctx_offset_valid(specs->struct_size, specs->ctx_offset)
+       || (specs->ctx_offset != ASN_CTX_OFFSET_EXTERNAL
+           && specs->pres_offset < specs->ctx_offset + sizeof(asn_struct_ctx_t)
            && specs->ctx_offset < specs->pres_offset + specs->pres_size)
        || arm->memb_offset > specs->struct_size || slot > specs->struct_size - arm->memb_offset) return -1;
     if(arm->memb_offset < specs->pres_offset + specs->pres_size
        && specs->pres_offset < arm->memb_offset + slot) return -1;
-    if(arm->memb_offset < specs->ctx_offset + sizeof(asn_struct_ctx_t)
+    if(specs->ctx_offset != ASN_CTX_OFFSET_EXTERNAL
+       && arm->memb_offset < specs->ctx_offset + sizeof(asn_struct_ctx_t)
        && specs->ctx_offset < arm->memb_offset + slot) return -1;
     return 0;
 }
@@ -507,16 +508,16 @@ _SET_xer_prepare(const asn_codec_ctx_t *codec,
     if(!td || !td->op || td->op->kind != ASN_KIND_SET || !td->specifics
     || !struct_ptr || (td->elements_count && !td->elements)) return -1;
     *specs = (const asn_SET_specifics_t *)td->specifics;
-    if(!(*specs)->struct_size || (*specs)->ctx_offset > (*specs)->struct_size
-    || (*specs)->struct_size - (*specs)->ctx_offset
-       < sizeof(asn_struct_ctx_t)) return -1;
+    if(!(*specs)->struct_size
+    || !asn_ctx_offset_valid((*specs)->struct_size, (*specs)->ctx_offset)) return -1;
     if(ASN__STACK_OVERFLOW_CHECK(codec)) return -1;
     *st = *struct_ptr;
     if(!*st) {
         *st = *struct_ptr = CALLOC(1, (*specs)->struct_size);
         if(!*st) return -1;
     }
-    *ctx = (asn_struct_ctx_t *)((char *)*st + (*specs)->ctx_offset);
+    *ctx = asn_get_struct_ctx(codec, *st, (*specs)->ctx_offset);
+    if(!*ctx) return -1;
     return 0;
 }
 

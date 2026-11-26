@@ -34,8 +34,7 @@ SEQUENCE_cbor_shape(const asn_TYPE_descriptor_t *td) {
     if(!td || !td->op || td->op->kind != ASN_KIND_SEQUENCE || !td->op->free_struct
        || !td->specifics || (td->elements_count && !td->elements)) return -1;
     specs = td->specifics;
-    if(!specs->struct_size || specs->ctx_offset > specs->struct_size
-       || sizeof(asn_struct_ctx_t) > specs->struct_size - specs->ctx_offset) return -1;
+    if(!specs->struct_size || !asn_ctx_offset_valid(specs->struct_size, specs->ctx_offset)) return -1;
     for(i = 0; i < td->elements_count; i++) {
         const asn_TYPE_member_t *member = &td->elements[i];
         size_t width;

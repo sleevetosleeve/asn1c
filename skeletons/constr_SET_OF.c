@@ -264,10 +264,12 @@ SET_OF_free(const asn_TYPE_descriptor_t *td, void *ptr,
 		asn_set_empty(list);	/* Remove (list->array) */
 
 		specs = (const asn_SET_OF_specifics_t *)td->specifics;
-		ctx = (asn_struct_ctx_t *)((char *)ptr + specs->ctx_offset);
-		if(ctx->ptr) {
-			ASN_STRUCT_FREE(*elm->type, ctx->ptr);
-			ctx->ptr = 0;
+		if(specs->ctx_offset != ASN_CTX_OFFSET_EXTERNAL) {
+			ctx = (asn_struct_ctx_t *)((char *)ptr + specs->ctx_offset);
+			if(ctx->ptr) {
+				ASN_STRUCT_FREE(*elm->type, ctx->ptr);
+				ctx->ptr = 0;
+			}
 		}
 
         switch(method) {

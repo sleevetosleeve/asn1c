@@ -985,8 +985,8 @@ cleanup:
  *   rejects noncanonical input and is not restartable (see cer_decoder.h).
  * Example: asn_decode(ctx, ATS_CER, &asn_DEF_Type, &value, input, input_size).
  */
-asn_dec_rval_t
-asn_decode(const asn_codec_ctx_t *opt_codec_ctx,
+static asn_dec_rval_t
+asn_decode_impl(const asn_codec_ctx_t *opt_codec_ctx,
            enum asn_transfer_syntax syntax, const asn_TYPE_descriptor_t *td,
            void **sptr, const void *buffer, size_t size) {
     if(!td || !td->op || !sptr || (size && !buffer)) {
@@ -1092,6 +1092,28 @@ asn_decode(const asn_codec_ctx_t *opt_codec_ctx,
         ASN__DECODE_FAILED;
 #endif  /* !defined(ASN_DISABLE_CBOR_SUPPORT) */
     }
+}
+
+asn_dec_rval_t
+asn_decode(const asn_codec_ctx_t *opt_codec_ctx,
+           enum asn_transfer_syntax syntax, const asn_TYPE_descriptor_t *td,
+           void **sptr, const void *buffer, size_t size) {
+    return asn_decode_impl(opt_codec_ctx, syntax, td, sptr, buffer, size);
+}
+
+asn_dec_rval_t
+asn_decode_ctx(const asn_codec_ctx_t *opt_codec_ctx,
+           enum asn_transfer_syntax syntax, const asn_TYPE_descriptor_t *td,
+           void **sptr, asn_struct_external_ctx_t *ext_ctx,
+           const void *buffer, size_t size) {
+    asn_codec_ctx_t s_codec_ctx;
+    if(opt_codec_ctx) {
+        s_codec_ctx = *opt_codec_ctx;
+    } else {
+        memset(&s_codec_ctx, 0, sizeof(s_codec_ctx));
+    }
+    s_codec_ctx.ext_struct_ctx = ext_ctx;
+    return asn_decode_impl(&s_codec_ctx, syntax, td, sptr, buffer, size);
 }
 
 /*

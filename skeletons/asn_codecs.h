@@ -48,6 +48,15 @@ typedef struct asn_codec_ctx_s {
 	 * the error occurred.
 	 */
 	unsigned int preserve_partial_decoding:1;
+
+	/*
+	 * External decode-context arena (asn_struct_external_ctx_t, see
+	 * constr_TYPE.h), used by decoders when the generated code was built
+	 * with -fno-ctx-members (ctx_offset == ASN_CTX_OFFSET_EXTERNAL).
+	 * Set by the *_decode_ctx() entry points on their stack copy of this
+	 * structure; read-only for decoders. 0 means embedded _asn_ctx members.
+	 */
+	void *ext_struct_ctx;
 } asn_codec_ctx_t;
 
 /*

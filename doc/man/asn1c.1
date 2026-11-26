@@ -206,6 +206,17 @@ Do not generate courtesy #include lines for non\-critical type
 dependencies.
 Helps prevent namespace collisions.
 .TP
+\-fno\-ctx\-members
+Do not embed the \f[CR]asn_struct_ctx_t _asn_ctx\f[R] member into generated
+structures; emit the \f[CR]ASN_CTX_OFFSET_EXTERNAL\f[R] sentinel in the type
+specifics instead. Decode such code through \f[CR]ber_decode_ctx()\f[R] /
+\f[CR]asn_decode_ctx()\f[R], passing a caller\-owned
+\f[CR]asn_struct_external_ctx_t\f[R] arena (zero\-initialized once, reused
+across \f[CR]RC_WMORE\f[R] resumes, reset with
+\f[CR]asn_struct_external_ctx_reset()\f[R]); see \f[CR]constr_TYPE.h\f[R].
+Plain \f[CR]ber_decode()\f[R] cannot resume \f[CR]\-fno\-ctx\-members\f[R]
+output. Design: \f[CR]docs/external\-ctx\-design.md\f[R] (issue #15).
+.TP
 \-fprefer\-import\-source
 Resolve only names that an IMPORTS group lists (\f[CR]xp_members\f[R]).
 In both modes, a name listed in any IMPORTS group resolves to the module

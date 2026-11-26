@@ -1,4 +1,13 @@
 Changes since v1.5.3:
+	* Add -fno-ctx-members (issue #15, Phase 0 BER/CER): generated constructed
+	  structs omit the asn_struct_ctx_t _asn_ctx member and carry the
+	  ASN_CTX_OFFSET_EXTERNAL sentinel in their specifics. New entry points
+	  ber_decode_ctx() and asn_decode_ctx() decode with a caller-owned
+	  asn_struct_external_ctx_t arena (8 inline frames + heap overflow)
+	  carried in asn_codec_ctx_t; all decoder ctx fetches, free paths and
+	  layout guards are dual-path / sentinel-aware. New macros
+	  ASN_STRUCT_FREE_CTX / ASN_STRUCT_RESET_CTX reset the arena.
+	  Design: docs/external-ctx-design.md.
 	* Stop emitting dead per-member type descriptors for SEQUENCE/SET members
 	  that merely reference a float-mapped named REAL type under
 	  -fcompound-names: the referenced type's descriptor already carries the

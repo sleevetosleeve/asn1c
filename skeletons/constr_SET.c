@@ -132,14 +132,14 @@ _SET_layout_valid(const asn_TYPE_descriptor_t *td,
 	if(!td || !specs || !specs->struct_size
 	|| (td->elements_count && (!td->elements || !specs->_mandatory_elements)))
 		return 0;
-	if(specs->ctx_offset > specs->struct_size
-	|| sizeof(asn_struct_ctx_t) > specs->struct_size - specs->ctx_offset)
+	if(!asn_ctx_offset_valid(specs->struct_size, specs->ctx_offset))
 		return 0;
 	if(specs->pres_offset > specs->struct_size
 	|| _SET_presence_size(td->elements_count, &presence_bytes) != 0)
 		return 0;
     if(presence_bytes > specs->struct_size - specs->pres_offset) return 0;
-    if(presence_bytes && specs->pres_offset < specs->ctx_offset + sizeof(asn_struct_ctx_t)
+    if(presence_bytes && specs->ctx_offset != ASN_CTX_OFFSET_EXTERNAL
+    && specs->pres_offset < specs->ctx_offset + sizeof(asn_struct_ctx_t)
     && specs->ctx_offset < specs->pres_offset + presence_bytes) return 0;
     return 1;
 }
@@ -271,6 +271,7 @@ _SET_native_real_size(const asn_TYPE_descriptor_t *td, size_t *size) {
  */
 static int
 _SET_context_valid(size_t size, size_t offset) {
+    if(offset == ASN_CTX_OFFSET_EXTERNAL) return 1;
     return offset <= size && sizeof(asn_struct_ctx_t) <= size - offset;
 }
 
@@ -290,7 +291,8 @@ _SET_choice_layout_valid(const asn_CHOICE_specifics_t *specs) {
             || specs->pres_size == sizeof(int))
         && specs->pres_offset <= specs->struct_size
         && specs->pres_size <= specs->struct_size - specs->pres_offset
-        && (specs->pres_offset >= specs->ctx_offset + sizeof(asn_struct_ctx_t)
+        && (specs->ctx_offset == ASN_CTX_OFFSET_EXTERNAL
+            || specs->pres_offset >= specs->ctx_offset + sizeof(asn_struct_ctx_t)
             || specs->ctx_offset >= specs->pres_offset + specs->pres_size);
 }
 
@@ -382,7 +384,8 @@ _SET_constructed_inline_size(const asn_TYPE_descriptor_t *td, size_t *size) {
               && td->op->free_struct == SET_OF_free) {
         const asn_SET_OF_specifics_t *specs = td->specifics;
         if(specs->struct_size < sizeof(asn_anonymous_set_)
-        || specs->ctx_offset < sizeof(asn_anonymous_set_)
+        || (specs->ctx_offset != ASN_CTX_OFFSET_EXTERNAL
+            && specs->ctx_offset < sizeof(asn_anonymous_set_))
         || td->elements_count != 1 || !td->elements || !td->elements[0].type
         || !td->elements[0].type->op || !td->elements[0].type->op->free_struct) return -1;
         *size = specs->struct_size;
@@ -962,6 +965,7 @@ SET_group_clear_wire_context(const asn_TYPE_descriptor_t *td, void *st) {
     if(!td || !td->specifics || !st) return -1;
     specs = (const asn_SET_specifics_t *)td->specifics;
     if(!_SET_group_layout_valid(td, specs)) return -1;
+    if(specs->ctx_offset == ASN_CTX_OFFSET_EXTERNAL) return 0;
     ctx = (asn_struct_ctx_t *)((char *)st + specs->ctx_offset);
     FREEMEM(ctx->ptr);
     memset(ctx, 0, sizeof(*ctx));

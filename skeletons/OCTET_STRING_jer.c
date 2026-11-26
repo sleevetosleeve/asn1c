@@ -646,7 +646,8 @@ OCTET_STRING__decode_jer(
     }
 
     /* Restore parsing context */
-    ctx = (asn_struct_ctx_t *)(((char *)*sptr) + specs->ctx_offset);
+    ctx = asn_get_struct_ctx(opt_codec_ctx, *sptr, specs->ctx_offset);
+    if(!ctx) { asn_dec_rval_t _fr = {RC_FAIL, 0}; return _fr; }
 
     return jer_decode_general(opt_codec_ctx, ctx, *sptr,
                               buf_ptr, size,

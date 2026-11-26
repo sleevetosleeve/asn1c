@@ -194,7 +194,8 @@ SET_OF_decode_xer(const asn_codec_ctx_t *opt_codec_ctx,
     /*
      * Restore parsing context.
      */
-    ctx = (asn_struct_ctx_t *)((char *)st + specs->ctx_offset);
+    ctx = asn_get_struct_ctx(opt_codec_ctx, st, specs->ctx_offset);
+    if(!ctx) RETURN(RC_FAIL);
 
     /* Check recursion depth to prevent stack overflow */
     if(ASN__STACK_OVERFLOW_CHECK(opt_codec_ctx))

@@ -68,6 +68,44 @@ ber_decode(const asn_codec_ctx_t *opt_codec_ctx,
 }
 
 /*
+ * ber_decode() variant carrying an external parsing-context arena
+ * (code generated with -fno-ctx-members). See ber_decoder.h.
+ */
+asn_dec_rval_t
+ber_decode_ctx(const asn_codec_ctx_t *opt_codec_ctx,
+           const asn_TYPE_descriptor_t *type_descriptor, void **struct_ptr,
+           asn_struct_external_ctx_t *ext_ctx,
+           const void *ptr, size_t size) {
+    asn_codec_ctx_t s_codec_ctx;
+
+    if(!type_descriptor || !type_descriptor->op || !type_descriptor->op->ber_decoder || !struct_ptr
+       || (size && !ptr)) {
+        asn_dec_rval_t failure = {RC_FAIL, 0};
+        return failure;
+    }
+
+    /*
+     * Stack checker requires that the codec context
+     * must be allocated on the stack.
+     */
+    if(opt_codec_ctx) {
+        s_codec_ctx = *opt_codec_ctx;
+    } else {
+        /* If context is not given, be security-conscious anyway */
+        memset(&s_codec_ctx, 0, sizeof(s_codec_ctx));
+        s_codec_ctx.max_stack_size = ASN__DEFAULT_STACK_MAX;
+    }
+    s_codec_ctx.ext_struct_ctx = ext_ctx;
+
+    return ASN__STRICT_DECODE_RESULT(type_descriptor, struct_ptr, ATS_BER,
+        type_descriptor->op->ber_decoder(&s_codec_ctx, type_descriptor,
+		struct_ptr,
+		ptr, size,
+		0
+		));
+}
+
+/*
  * Check the set of <TL<TL<TL...>>> tags matches the definition.
  */
 asn_dec_rval_t

@@ -987,8 +987,8 @@ OCTET_STRING__valid_ber_descriptor(
         : offsetof(OCTET_STRING_t, _asn_ctx);
     minimum_size = context_offset + sizeof(asn_struct_ctx_t);
     if(specs->struct_size < minimum_size
-    || specs->ctx_offset < context_offset
-    || specs->ctx_offset > specs->struct_size - sizeof(asn_struct_ctx_t))
+    || (specs->ctx_offset != ASN_CTX_OFFSET_EXTERNAL && (specs->ctx_offset < context_offset
+    || specs->ctx_offset > specs->struct_size - sizeof(asn_struct_ctx_t))))
         return 0;
     if(td->tags_count > BER_EXPLICIT_TAG_DEPTH_LIMIT
     || td->all_tags_count > BER_EXPLICIT_TAG_DEPTH_LIMIT
@@ -1079,7 +1079,8 @@ OCTET_STRING_decode_ber(const asn_codec_ctx_t *opt_codec_ctx,
         state.st = (BIT_STRING_t *)(*sptr = CALLOC(1, specs->struct_size));
         if(!state.st) return octet_string_ber_result(&state, RC_FAIL);
     }
-    state.ctx = (asn_struct_ctx_t *)((char *)state.st + specs->ctx_offset);
+    state.ctx = asn_get_struct_ctx(opt_codec_ctx, state.st, specs->ctx_offset);
+    if(!state.ctx) return octet_string_ber_result(&state, RC_FAIL);
     return octet_string_ber_run(&state, opt_codec_ctx);
 }
 

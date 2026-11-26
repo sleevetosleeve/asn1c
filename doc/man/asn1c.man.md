@@ -181,6 +181,16 @@ cargo check --offline --manifest-path generated/Cargo.toml
 :   Do not generate courtesy #include lines for non-critical type dependencies.
     Helps prevent namespace collisions.
 
+-fno-ctx-members
+:   Do not embed the `asn_struct_ctx_t _asn_ctx` member into generated
+    structures; emit the `ASN_CTX_OFFSET_EXTERNAL` sentinel in the type
+    specifics instead. Decode such code through `ber_decode_ctx()` /
+    `asn_decode_ctx()`, passing a caller-owned `asn_struct_external_ctx_t`
+    arena (zero-initialized once, reused across `RC_WMORE` resumes, reset
+    with `asn_struct_external_ctx_reset()`); see `constr_TYPE.h`.
+    Plain `ber_decode()` cannot resume `-fno-ctx-members` output.
+    Design: `docs/external-ctx-design.md` (issue #15).
+
 -fprefer-import-source
 :   Resolve only names that an IMPORTS group lists (`xp_members`).
     In both modes, a name listed in any IMPORTS group resolves to the module

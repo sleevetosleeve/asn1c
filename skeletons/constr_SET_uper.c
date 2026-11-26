@@ -87,8 +87,7 @@ SET__uper_base_layout(const asn_TYPE_descriptor_t *td, const asn_SET_specifics_t
        || td->elements_count / (8 * sizeof(unsigned))
           + (td->elements_count % (8 * sizeof(unsigned)) != 0)
           > (specs->struct_size - specs->pres_offset) / sizeof(unsigned)
-       || specs->ctx_offset > specs->struct_size
-       || sizeof(asn_struct_ctx_t) > specs->struct_size - specs->ctx_offset) return -1;
+       || !asn_ctx_offset_valid(specs->struct_size, specs->ctx_offset)) return -1;
     return 0;
 }
 

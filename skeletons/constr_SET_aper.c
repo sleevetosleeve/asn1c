@@ -273,8 +273,7 @@ SET_aper_layout_valid(const asn_TYPE_descriptor_t *td,
     if(!td || !specs || !specs->struct_size
     || (td->elements_count && (!td->elements || !specs->_mandatory_elements)))
         return 0;
-    if(specs->ctx_offset > specs->struct_size
-    || sizeof(asn_struct_ctx_t) > specs->struct_size - specs->ctx_offset)
+    if(!asn_ctx_offset_valid(specs->struct_size, specs->ctx_offset))
         return 0;
     if((size_t)td->elements_count > SIZE_MAX - (bits_per_word - 1)) return 0;
     words = ((size_t)td->elements_count + bits_per_word - 1) / bits_per_word;

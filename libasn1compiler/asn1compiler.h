@@ -185,6 +185,13 @@ enum asn1c_flags {
 	A1C_TOLERANT_UTC_TIME           = 0x2000000000,
 	/* --strict-mode: standards policy shared by all codecs and targets. */
 	A1C_STRICT_MODE                 = 0x4000000000,
+	/*
+	 * -fno-ctx-members
+	 * Do not embed the asn_struct_ctx_t _asn_ctx member into generated
+	 * structures; emit ASN_CTX_OFFSET_EXTERNAL instead. Decode such code
+	 * via the *_decode_ctx() entry points with an external context.
+	 */
+	A1C_NO_CTX_MEMBERS              = 0x8000000000,
 };
 
 /*
