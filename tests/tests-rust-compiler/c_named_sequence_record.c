@@ -196,7 +196,7 @@ check_out_of_range(void) {
     char diagnostic[128];
     size_t diagnostic_size = sizeof(diagnostic);
     int failed = result.code != RC_OK || result.consumed != sizeof(wire) || !decoded
-        || !decoded->child || decoded->child->number != 6 || !decoded->after
+        || decoded->child.number != 6 || !decoded->after
         || asn_check_constraints(&asn_DEF_Packet, decoded, diagnostic,
                                  &diagnostic_size) == 0;
     if(decoded) ASN_STRUCT_FREE(asn_DEF_Packet, decoded);
@@ -322,22 +322,22 @@ main(void) {
         .data = {.buf = &data_byte, .size = 1},
         .bits = {.buf = &bits_byte, .size = 1, .bits_unused = 3},
     };
-    PacketLeaves_t packet_leaves = {.child = &leaves};
-    Packet_t packet = {.child = &inner, .after = 0xff};
-    SequenceImplicit_t implicit = {.child = &inner, .after = 0xff};
-    SequenceExplicit_t explicit_value = {.child = &inner, .after = 0xff};
+    PacketLeaves_t packet_leaves = {.child = leaves};
+    Packet_t packet = {.child = inner, .after = 0xff};
+    SequenceImplicit_t implicit = {.child = inner, .after = 0xff};
+    SequenceExplicit_t explicit_value = {.child = inner, .after = 0xff};
     SequenceOptional_t optional = {.after = 0xff};
     SequenceOptional_t optional_present = {.child = &inner, .after = 0xff};
-    SetPacket_t set = {.child = &inner, .after = 0xff, .before = 0xff};
-    SetImplicit_t set_implicit = {.child = &inner, .after = 0xff};
-    SetExplicit_t set_explicit = {.child = &inner, .after = 0xff};
+    SetPacket_t set = {.child = inner, .after = 0xff, .before = 0xff};
+    SetImplicit_t set_implicit = {.child = inner, .after = 0xff};
+    SetExplicit_t set_explicit = {.child = inner, .after = 0xff};
     SetOptional_t set_optional = {.after = 0xff};
     SetOptional_t set_optional_present = {.child = &inner, .after = 0xff};
     SetDefaults_t set_defaults = {
-        .child = &inner, .enabled = 0, .count = NULL,
+        .child = inner, .enabled = 0, .count = NULL,
     };
     SetDefaults_t set_defaults_nondefault = {
-        .child = &inner, .enabled = 0xff, .count = &count_nondefault,
+        .child = inner, .enabled = 0xff, .count = &count_nondefault,
     };
     int failed = 0;
     failed |= check_vector(&asn_DEF_Packet, &packet, packet_der, sizeof(packet_der),

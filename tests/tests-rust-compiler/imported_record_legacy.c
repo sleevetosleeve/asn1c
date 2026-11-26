@@ -131,9 +131,9 @@ main(void) {
     IntegerChild_t integer = {.value = 2};
     BooleanSequence_t sequence = {.flag = 1};
     BooleanSet_t set = {.flag = 1};
-    ImportedRecordConstructedClient_Packet_t integer_parent = {.value = &integer};
-    ImportedRecordSequenceClient_Packet_t sequence_parent = {.child = &sequence};
-    ImportedRecordSetClient_Packet_t set_parent = {.child = &set};
+    ImportedRecordConstructedClient_Packet_t integer_parent = {.value = integer};
+    ImportedRecordSequenceClient_Packet_t sequence_parent = {.child = sequence};
+    ImportedRecordSetClient_Packet_t set_parent = {.child = set};
     ASN_SET_MKPRESENT(set._presence_map, BooleanSet_PR_flag);
     return check_vectors(&asn_DEF_ImportedRecordConstructedClient_Packet,
                          &integer_parent, integer_der, sizeof(integer_der),

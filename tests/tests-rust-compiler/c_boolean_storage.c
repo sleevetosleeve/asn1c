@@ -58,10 +58,9 @@ values_equal(asn_TYPE_descriptor_t *td, const void *expected, const void *actual
         const ImportedParent_t *right = actual;
         long left_count = left->count ? *left->count : 2;
         long right_count = right->count ? *right->count : 2;
-        if(!descriptor_ready(&asn_DEF_RemoteLeaf)
-           || !left->child || !right->child) return 0;
+        if(!descriptor_ready(&asn_DEF_RemoteLeaf)) return 0;
         return asn_DEF_RemoteLeaf.op->compare_struct(
-                   &asn_DEF_RemoteLeaf, left->child, right->child) == 0
+                   &asn_DEF_RemoteLeaf, &left->child, &right->child) == 0
             && (left->enabled != 0) == (right->enabled != 0)
             && left_count == right_count;
     }
@@ -335,7 +334,7 @@ check_imported_child(void) {
     };
     RemoteLeaf_t child = {.first = 1, .third = 1};
     long count = 2;
-    ImportedParent_t value = {.child = &child, .count = &count};
+    ImportedParent_t value = {.child = child, .count = &count};
     /* Mark required leaves; parent DEFAULT fields stay absent in both values. */
     ASN_SET_MKPRESENT(child._presence_map, RemoteLeaf_PR_first);
     ASN_SET_MKPRESENT(child._presence_map, RemoteLeaf_PR_second);

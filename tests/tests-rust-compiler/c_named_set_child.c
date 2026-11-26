@@ -181,7 +181,7 @@ check_malformed_and_constraints(const SequenceNatural_t *natural) {
     result = asn_decode(NULL, ATS_BER, &asn_DEF_SequenceNatural, (void **)&decoded,
                         out_of_range, sizeof(out_of_range));
     if(result.code != RC_OK || result.consumed != sizeof(out_of_range) || !decoded
-       || !decoded->child || decoded->child->number != 6 || !decoded->after
+       || decoded->child.number != 6 || !decoded->after
        || asn_check_constraints(&asn_DEF_SequenceNatural, decoded, diagnostic,
                                 &diagnostic_size) == 0) {
         fprintf(stderr, "named SET child INTEGER constraint timing mismatch\n");
@@ -289,18 +289,18 @@ main(void) {
         0x84, 0x01, 0xff, 0, 0,
     };
     InnerSet_t child = {.number = 2, .flag = 0xff};
-    SequenceNatural_t natural = {.child = &child, .after = 0xff};
-    SequenceImplicit_t implicit = {.child = &child, .after = 0xff};
-    SequenceExplicit_t explicit_value = {.child = &child, .after = 0xff};
+    SequenceNatural_t natural = {.child = child, .after = 0xff};
+    SequenceImplicit_t implicit = {.child = child, .after = 0xff};
+    SequenceExplicit_t explicit_value = {.child = child, .after = 0xff};
     SequenceOptional_t sequence_absent = {.after = 0xff};
     SequenceOptional_t sequence_present = {.child = &child, .after = 0xff};
-    SetExplicit_t set_value = {.child = &child, .after = 0xff};
-    SetNatural_t set_natural = {.child = &child, .after = 0xff};
-    SetImplicit_t set_implicit = {.child = &child, .after = 0xff};
+    SetExplicit_t set_value = {.child = child, .after = 0xff};
+    SetNatural_t set_natural = {.child = child, .after = 0xff};
+    SetImplicit_t set_implicit = {.child = child, .after = 0xff};
     SetOptional_t set_absent = {.after = 0xff};
     SetOptional_t set_present = {.child = &child, .after = 0xff};
-    SetDefaults_t defaults = {.child = &child, .enabled = 0};
-    SetDefaults_t defaults_true = {.child = &child, .enabled = 0xff};
+    SetDefaults_t defaults = {.child = child, .enabled = 0};
+    SetDefaults_t defaults_true = {.child = child, .enabled = 0xff};
     int failed = 0;
     ASN_SET_MKPRESENT(child._presence_map, InnerSet_PR_number);
     ASN_SET_MKPRESENT(child._presence_map, InnerSet_PR_flag);

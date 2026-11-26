@@ -192,7 +192,7 @@ check_explicit_defaults(void) {
     result = ber_decode(NULL, &asn_DEF_DefaultParent, (void **)&decoded,
                         der, sizeof(der));
     failed = result.code != RC_OK || result.consumed != sizeof(der)
-        || !decoded || !decoded->child || decoded->child->number != 2
+        || !decoded || decoded->child.number != 2
         || decoded->enabled || !decoded->count || *decoded->count != 3;
     release_value(&asn_DEF_DefaultParent, decoded);
     return failed || check_cer_rejects(&asn_DEF_DefaultParent, der, sizeof(der))
@@ -301,21 +301,21 @@ main(void) {
     RemoteSeq_t remote = {.number = 2, .flag = &true_value};
     RemoteOwned_t owned_value = {0};
     OwnedPair_t owned = {0};
-    DefaultParent_t defaults = {.child = &remote};
+    DefaultParent_t defaults = {.child = remote};
     LocalEquivalentLeaf_t local_leaf = {.number = 2, .flag = &true_value};
-    LocalEquivalent_t local = {.child = &local_leaf, .tail = 1};
-    ImportedEquivalent_t imported = {.child = &remote, .tail = 1};
+    LocalEquivalent_t local = {.child = local_leaf, .tail = 1};
+    ImportedEquivalent_t imported = {.child = remote, .tail = 1};
     ImportedCommonAlphaSource_Common_t alpha_value = {.value = 2};
     ImportedCommonBetaSource_Common_t beta_value = {.value = 6};
-    AlphaPacket_t alpha = {.child = &alpha_value};
-    BetaPacket_t beta = {.child = &beta_value};
+    AlphaPacket_t alpha = {.child = alpha_value};
+    BetaPacket_t beta = {.child = beta_value};
     owned_value.octets.buf = octets;
     owned_value.octets.size = sizeof(octets);
     owned_value.bits.buf = bits;
     owned_value.bits.size = sizeof(bits);
     owned_value.bits.bits_unused = 5;
-    owned.implicitChild = &owned_value;
-    owned.explicitChild = &owned_value;
+    owned.implicitChild = owned_value;
+    owned.explicitChild = owned_value;
     if(check_vectors(&asn_DEF_OwnedPair, &owned, owned_der, sizeof(owned_der),
                      owned_cer, sizeof(owned_cer))) {
         fputs("OwnedPair vectors failed\n", stderr);
