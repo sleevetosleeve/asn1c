@@ -28,6 +28,22 @@ asn_dec_rval_t oer_decode(const struct asn_codec_ctx_s *opt_codec_ctx,
 	);
 
 /*
+ * Variant of oer_decode() for code generated with -fno-ctx-members:
+ * parsing contexts live in the caller-owned external arena ext_ctx instead
+ * of embedded _asn_ctx members. Zero-initialize the arena once, pass it on
+ * every call (including RC_WMORE resumes), and reset it with
+ * asn_struct_external_ctx_reset() before decoding fresh data into the same
+ * structures. Passing NULL for ext_ctx behaves like oer_decode().
+ */
+asn_dec_rval_t oer_decode_ctx(const struct asn_codec_ctx_s *opt_codec_ctx,
+	const struct asn_TYPE_descriptor_s *type_descriptor,
+	void **struct_ptr,	/* Pointer to a target structure's pointer */
+	struct asn_struct_external_ctx_s *ext_ctx,	/* External parsing-context arena */
+	const void *buffer,	/* Data to be decoded */
+	size_t size		/* Size of that buffer */
+	);
+
+/*
  * Type of generic function which decodes the byte stream into the structure.
  */
 typedef asn_dec_rval_t(oer_type_decoder_f)(

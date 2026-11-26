@@ -56,6 +56,50 @@ oer_decode(const asn_codec_ctx_t *opt_codec_ctx,
 }
 
 /*
+ * oer_decode() variant carrying an external parsing-context arena
+ * (code generated with -fno-ctx-members). See oer_decoder.h.
+ */
+asn_dec_rval_t
+oer_decode_ctx(const asn_codec_ctx_t *opt_codec_ctx,
+           const asn_TYPE_descriptor_t *type_descriptor, void **struct_ptr,
+           asn_struct_external_ctx_t *ext_ctx,
+           const void *ptr, size_t size) {
+    asn_codec_ctx_t s_codec_ctx;
+
+    if(!type_descriptor || !type_descriptor->op || !type_descriptor->op->oer_decoder || !struct_ptr
+       || (size && !ptr)) {
+        asn_dec_rval_t failure = {RC_FAIL, 0};
+        return failure;
+    }
+
+    /*
+     * Stack checker requires that the codec context
+     * must be allocated on the stack.
+     */
+    if(opt_codec_ctx) {
+        s_codec_ctx = *opt_codec_ctx;
+    } else {
+        /* If context is not given, be security-conscious anyway */
+        memset(&s_codec_ctx, 0, sizeof(s_codec_ctx));
+        s_codec_ctx.max_stack_size = ASN__DEFAULT_STACK_MAX;
+    }
+    s_codec_ctx.ext_struct_ctx = ext_ctx;
+
+    if(!type_descriptor->op->oer_decoder) {
+        asn_dec_rval_t rv;
+        ASN_DEBUG("No OER decoder for type %s", type_descriptor->name);
+        rv.code = RC_FAIL;
+        rv.consumed = 0;
+        return rv;
+    }
+    return ASN__STRICT_DECODE_RESULT(type_descriptor, struct_ptr, ATS_BASIC_OER,
+        type_descriptor->op->oer_decoder(&s_codec_ctx, type_descriptor, 0,
+		struct_ptr,	/* Pointer to the destination structure */
+		ptr, size	/* Buffer and its size */
+		));
+}
+
+/*
  * Open Type is encoded as a length (#8.6) followed by that number of bytes.
  * RETURN VALUES:
  *       0:     More data expected than bufptr contains.

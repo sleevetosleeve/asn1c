@@ -48,6 +48,26 @@ asn_dec_rval_t uper_decode(
 );
 
 /*
+ * Variant of uper_decode() for code generated with -fno-ctx-members:
+ * parsing contexts live in the caller-owned external arena ext_ctx instead
+ * of embedded _asn_ctx members. Zero-initialize the arena once, pass it on
+ * every call, and reset it with asn_struct_external_ctx_reset() before
+ * decoding fresh data into the same structures. Passing NULL for ext_ctx
+ * behaves like uper_decode().
+ * WARNING: Like uper_decode(), this call returns the number of BITS read.
+ */
+asn_dec_rval_t uper_decode_ctx(
+    const struct asn_codec_ctx_s *opt_codec_ctx,
+    const struct asn_TYPE_descriptor_s *type_descriptor, /* Type to decode */
+    void **struct_ptr,  /* Pointer to a target structure's pointer */
+    struct asn_struct_external_ctx_s *ext_ctx, /* External parsing-context arena */
+    const void *buffer, /* Data to be decoded */
+    size_t size,        /* Size of the input data buffer, in bytes */
+    int skip_bits,      /* Number of unused leading bits, 0..7 */
+    int unused_bits     /* Number of unused tailing bits, 0..7 */
+);
+
+/*
  * Canonical Unaligned PER decoder variants that enforce strict X.691 rules.
  */
 asn_dec_rval_t uper_decode_complete_canonical(

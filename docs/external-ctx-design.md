@@ -1,10 +1,13 @@
 # Proposal: external decode context (`-fno-ctx-members`)
 
-Status: design proposal, 2026-11-26; Phase 0 (BER/CER) implemented in the PR
-carrying this change (issue #15): `-fno-ctx-members`, the arena, entry points,
-dual-path decoders, tests. Later phases pending. A local prototype validated
-the mechanism earlier (see "Experiment evidence"). Responsible party: asn1c
-maintainers (fork).
+Status: design implemented, 2026-11-26 (issue #15); all phases landed:
+Phase 0 (BER/CER, shared machinery: `-fno-ctx-members`, the arena, dual-path
+fetches, sentinel-aware guards/free paths, tests) plus Phases 1-4, which add
+the remaining per-codec `_ctx` entry points (`xer_decode_ctx`,
+`jer_decode_ctx`, `oer_decode_ctx`, `uper_decode_ctx`, `aper_decode_ctx`,
+`cbor_decode_ctx`) on top of the existing `ber_decode_ctx` / `asn_decode_ctx`.
+A local prototype validated the mechanism earlier (see "Experiment
+evidence"). Responsible party: asn1c maintainers (fork).
 
 ## Motivation
 
@@ -149,6 +152,13 @@ Compatibility contract: plain `ber_decode()` & co. cannot resume
 `-fno-ctx-members` output (a temporary arena would die on `RC_WMORE`), so
 constructed types decoded through them fail with `RC_FAIL`. This is
 documented; the flag and the `_ctx` entry points are used together.
+Refined after Phases 1-4: the `RC_FAIL` contract holds for the resumable
+codecs (BER/CER, XER, JER, OER), whose decoders fetch the context at decode
+time. UPER/APER/CBOR decoders never fetch the embedded context at decode
+time (PER is single-shot by design; the CBOR/PER `ctx_offset` uses are
+layout guards only), so their plain entry points keep decoding
+`-fno-ctx-members` output successfully; the `_ctx` variants exist for API
+symmetry and pass the arena through `asn_codec_ctx_t` unchanged.
 
 ### 4. Decoder and runtime changes
 
@@ -208,6 +218,17 @@ pass the existing suites.
 - 2026-11-26: converter-example/PDU helpers deferred until all decoders are
   onboarded.
 - 2026-11-26: sentinel value `(unsigned)-1` for `ctx_offset`.
+- 2026-11-26: Phases 1-4 landed as one change: `xer_decode_ctx`,
+  `jer_decode_ctx`, `oer_decode_ctx`, `uper_decode_ctx`, `aper_decode_ctx`,
+  `cbor_decode_ctx` all follow the `ber_decode_ctx` pattern (always stack-copy
+  the codec context, set `ext_struct_ctx`, dispatch). `uper_decode` /
+  `aper_decode` were split into a static `*_impl` taking the arena so the
+  plain entry points keep their exact former behavior. Decoder headers
+  declare the arena parameter as `struct asn_struct_external_ctx_s *` (the
+  tag forward-declared in `asn_application.h`), because `uper_decoder.h` /
+  `aper_decoder.h` are included from `asn_internal.h` before the typedef in
+  `constr_TYPE.h` is visible. PER/CBOR plain entry points intentionally still
+  decode `-fno-ctx-members` output (they never fetch ctx at decode time).
 
 ## References
 

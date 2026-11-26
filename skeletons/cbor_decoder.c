@@ -37,3 +37,29 @@ cbor_decode(const asn_codec_ctx_t *opt_codec_ctx,
     return ASN__STRICT_DECODE_RESULT(td, struct_ptr, ATS_CBOR,
         td->op->cbor_decoder(opt_codec_ctx, td, struct_ptr, buffer, size));
 }
+
+/*
+ * cbor_decode() variant carrying an external parsing-context arena
+ * (code generated with -fno-ctx-members). See cbor_decoder.h.
+ */
+asn_dec_rval_t
+cbor_decode_ctx(const asn_codec_ctx_t *opt_codec_ctx,
+            const asn_TYPE_descriptor_t *td, void **struct_ptr,
+            asn_struct_external_ctx_t *ext_ctx,
+            const void *buffer, size_t size) {
+    asn_codec_ctx_t s_codec_ctx;
+
+    if(!td || !td->op || !td->op->cbor_decoder || !struct_ptr
+       || (size && !buffer)) ASN__DECODE_FAILED;
+
+    if(opt_codec_ctx) {
+        s_codec_ctx = *opt_codec_ctx;
+    } else {
+        memset(&s_codec_ctx, 0, sizeof(s_codec_ctx));
+        s_codec_ctx.max_stack_size = ASN__DEFAULT_STACK_MAX;
+    }
+    s_codec_ctx.ext_struct_ctx = ext_ctx;
+
+    return ASN__STRICT_DECODE_RESULT(td, struct_ptr, ATS_CBOR,
+        td->op->cbor_decoder(&s_codec_ctx, td, struct_ptr, buffer, size));
+}

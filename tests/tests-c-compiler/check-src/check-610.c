@@ -2,9 +2,9 @@
  * check-610.c
  *
  * Default-mode companion of check-610.-fno-ctx-members.c: same module
- * (610-ext-ctx-ber.asn1) generated WITHOUT -fno-ctx-members, so NetMsg_t
- * keeps its embedded _asn_ctx members and plain ber_decode() chunked
- * decoding must keep working (embedded-ctx regression).
+ * (610-ext-ctx-ber-OK.asn1) generated WITHOUT -fno-ctx-members, so NetMsg_t
+ * keeps its embedded _asn_ctx members and plain decode entry points must
+ * keep working for every codec (embedded-ctx regression).
  */
 #undef	NDEBUG
 #include <stdio.h>
@@ -13,8 +13,20 @@
 #include <assert.h>
 
 #include <NetMsg.h>
+#include <asn_application.h>
 #include <der_encoder.h>
 #include <ber_decoder.h>
+
+static uint8_t enc_buf[2048];
+static size_t enc_len;
+static int
+enc_cb(const void *buf, size_t size, void *key) {
+	(void)key;
+	if(enc_len + size > sizeof(enc_buf)) return -1;
+	memcpy(enc_buf + enc_len, buf, size);
+	enc_len += size;
+	return 0;
+}
 
 static int
 decode_chunked(const uint8_t *buf, size_t len, size_t chunk, NetMsg_t **out) {
@@ -97,6 +109,34 @@ main(int ac, char **av) {
 	if(rc) return 1;
 
 	ASN_STRUCT_FREE(asn_DEF_NetMsg, dec);
+	dec = NULL;
+
+	/* Every codec through the plain generic dispatcher (embedded ctx). */
+	{
+		struct { const char *name; enum asn_transfer_syntax ats; } codecs[] = {
+			{"BER", ATS_BER}, {"XER", ATS_BASIC_XER}, {"JER", ATS_JER},
+			{"OER", ATS_BASIC_OER}, {"UPER", ATS_UNALIGNED_BASIC_PER},
+			{"APER", ATS_ALIGNED_BASIC_PER}, {"CBOR", ATS_CBOR},
+		};
+		for(unsigned i = 0; i < sizeof(codecs)/sizeof(codecs[0]); i++) {
+			enc_len = 0;
+			asn_enc_rval_t erc = asn_encode(0, codecs[i].ats,
+				&asn_DEF_NetMsg, &src, enc_cb, 0);
+			if(erc.encoded == (ssize_t)-1) {
+				printf("%s: ENCODE FAIL\n", codecs[i].name);
+				return 1;
+			}
+			NetMsg_t *m = NULL;
+			asn_dec_rval_t dr = asn_decode(0, codecs[i].ats,
+				&asn_DEF_NetMsg, (void **)&m, enc_buf, enc_len);
+			rc = (dr.code == RC_OK) ? check(m) : -1;
+			printf("%s: plain asn_decode full: %s (code=%d rc=%d)\n",
+				codecs[i].name, rc == 0 ? "PASS" : "FAIL", dr.code, rc);
+			if(rc) return 1;
+			if(m) ASN_STRUCT_FREE(asn_DEF_NetMsg, m);
+		}
+	}
+
 	printf("ALL PASS\n");
 	return 0;
 }

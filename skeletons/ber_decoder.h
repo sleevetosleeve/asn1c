@@ -46,7 +46,7 @@ asn_dec_rval_t ber_decode_ctx(
     const struct asn_codec_ctx_s *opt_codec_ctx,
     const struct asn_TYPE_descriptor_s *type_descriptor,
     void **struct_ptr,  /* Pointer to a target structure's pointer */
-    asn_struct_external_ctx_t *ext_ctx, /* External parsing-context arena */
+    struct asn_struct_external_ctx_s *ext_ctx, /* External parsing-context arena */
     const void *buffer, /* Data to be decoded */
     size_t size         /* Size of that buffer */
 );
