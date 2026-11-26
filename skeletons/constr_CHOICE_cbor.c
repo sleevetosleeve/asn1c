@@ -25,8 +25,7 @@ CHOICE_cbor_shape(const asn_TYPE_descriptor_t *td) {
     if(!td || !td->op || td->op->kind != ASN_KIND_CHOICE || !td->op->free_struct
        || !td->specifics || !td->elements || !td->elements_count) return -1;
     specs = td->specifics;
-    if(!specs->struct_size || specs->ctx_offset > specs->struct_size
-       || sizeof(asn_struct_ctx_t) > specs->struct_size - specs->ctx_offset
+    if(!specs->struct_size || !asn_ctx_offset_valid(specs->struct_size, specs->ctx_offset)
        || (specs->pres_size != sizeof(char) && specs->pres_size != sizeof(short)
            && specs->pres_size != sizeof(int))
        || specs->pres_offset > specs->struct_size

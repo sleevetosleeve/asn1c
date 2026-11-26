@@ -568,6 +568,8 @@ asn1c_handle_simple_f_option(const char *name, asn1c_cli_options_t *options) {
         options->compiler_flags |= A1C_NO_CONSTRAINTS;
     else if(!strcmp(name, "no-include-deps"))
         options->compiler_flags |= A1C_NO_INCLUDE_DEPS;
+    else if(!strcmp(name, "no-ctx-members"))
+        options->compiler_flags |= A1C_NO_CTX_MEMBERS;
     else if(!strcmp(name, "includes-quoted"))
         options->compiler_flags |= A1C_INCLUDES_QUOTED;
     else if(!strcmp(name, "unnamed-unions"))
@@ -1416,6 +1418,8 @@ usage(const char *av0) {
 "  -fline-refs           Include ASN.1 module's line numbers in comments\n"
 "  -fno-constraints      Do not generate the constraint checking code\n"
 "  -fno-include-deps     Do not generate the courtesy #includes for dependencies\n"
+"  -fno-ctx-members      Do not embed asn_struct_ctx_t in generated structs;\\n"
+"                        decode via the *_decode_ctx entry points with an external ctx\\n"
 "  -fprefer-import-source  Resolve only names listed in IMPORTS (no whole-module fallback)\n"
 "  -funnamed-unions      Enable unnamed unions in structures\n"
 "  -fwide-types          Use INTEGER_t instead of \"long\" by default, etc.\n"

@@ -468,7 +468,8 @@ SET_decode_jer(const asn_codec_ctx_t *codec, const asn_TYPE_descriptor_t *td,
     st = *struct_ptr;
     if(!st) { st = *struct_ptr = CALLOC(1, specs->struct_size); if(!st) return result; }
     if(SET_jer_preflight(td, st)) return result;
-    ctx = (asn_struct_ctx_t *)((char *)st + specs->ctx_offset);
+    ctx = asn_get_struct_ctx(codec, st, specs->ctx_offset);
+    if(!ctx) return result;
     if(ASN__STACK_OVERFLOW_CHECK(codec)) return result;
     if(has_open) return SET_jer_decode_open_object(codec, td, st, ctx, ptr, (size_t)complete);
     return SET_jer_loop(codec, td, st, ctx, ptr, size);

@@ -1,8 +1,10 @@
 # Proposal: external decode context (`-fno-ctx-members`)
 
-Status: design proposal, 2026-11-26. No code is changed by this document;
-a local prototype validated the mechanism (see "Experiment evidence") but is
-not committed. Responsible party: asn1c maintainers (fork).
+Status: design proposal, 2026-11-26; Phase 0 (BER/CER) implemented in the PR
+carrying this change (issue #15): `-fno-ctx-members`, the arena, entry points,
+dual-path decoders, tests. Later phases pending. A local prototype validated
+the mechanism earlier (see "Experiment evidence"). Responsible party: asn1c
+maintainers (fork).
 
 ## Motivation
 
@@ -115,9 +117,11 @@ Defined in `skeletons/constr_TYPE.h` next to `asn_struct_ctx_t`:
   optional heap overflow, so the common case needs no allocation.
 - Helpers (type-agnostic, no vtable change):
   `asn_ext_ctx_get(arena, st)` (find-or-create a zeroed frame),
-  `asn_struct_external_ctx_reset(arena)` (free heap overflow, zero the arena),
-  `asn_ext_ctx_release_frame(arena, st)` (free `ctx->ptr` scratch and zero the
-  frame).
+  `asn_struct_external_ctx_reset(arena)` (free every frame's `ctx->ptr`
+  scratch, free the heap overflow, zero the arena),
+  `asn_get_struct_ctx(opt_codec_ctx, st, ctx_offset)` (dual-path fetch used by
+  all decoder sites), and `asn_ctx_offset_valid(struct_size, ctx_offset)`
+  (sentinel-aware layout guard).
 - Carried inside `asn_codec_ctx_t` as a `void *ext_struct_ctx` field (a `void *`
   avoids header cycles); set by the `*_decode_ctx` entry points on their stack
   copy of the codec context, so it reaches every nested decoder through the
@@ -158,9 +162,11 @@ documented; the flag and the `_ctx` entry points are used together.
   when the sentinel is set (the arena provides the room).
 - New macros `ASN_STRUCT_RESET_CTX(asn_DEF, ptr, ext)` and
   `ASN_STRUCT_FREE_CTX(asn_DEF, ptr, ext)`: existing `free_struct` (sentinel
-  aware) plus arena frame release. **Decision: no new field in
-  `asn_TYPE_operation_s` and no `free_struct_ctx` method** — all scratch is
-  generic `ctx->ptr`, so type-agnostic helpers suffice.
+  aware) plus `asn_struct_external_ctx_reset(ext)`. **Decision: no new field
+  in `asn_TYPE_operation_s` and no `free_struct_ctx` method** — all scratch
+  is generic `ctx->ptr`, so type-agnostic helpers suffice. Resetting the whole
+  arena (not one frame) is what makes re-decoding into the same struct work,
+  matching the embedded model where `ASN_STRUCT_RESET` zeroes nested ctxs too.
 - Partial decoding: the arena's lifetime is caller-controlled; with
   `preserve_partial_decoding` the frames stay alive after `RC_FAIL` until the
   caller resets, so partially decoded structures remain inspectable.

@@ -116,10 +116,25 @@ static int emit_collection_constraint(arg_t *arg, asn1p_expr_t *expr);
 #define	UNNAMED_UNIONS	(arg->flags & A1C_UNNAMED_UNIONS)
 #define	HIDE_INNER_DEFS	(arg->embed && !(arg->flags & A1C_ALL_DEFS_GLOBAL))
 
-#define	PCTX_DEF INDENTED(		\
-	OUT("\n");			\
-	OUT("/* Context for parsing across buffer boundaries */\n");	\
-	OUT("asn_struct_ctx_t _asn_ctx;\n"));
+#define	PCTX_DEF do {				\
+	if(!(arg->flags & A1C_NO_CTX_MEMBERS)) {		\
+		INDENTED(				\
+		OUT("\n");				\
+		OUT("/* Context for parsing across buffer boundaries */\n");		\
+		OUT("asn_struct_ctx_t _asn_ctx;\n"));		\
+	}						\
+} while(0)
+
+/*
+ * Emit the ctx_offset field of a type's specifics: the embedded member's
+ * offset, or the external sentinel under -fno-ctx-members.
+ */
+#define	OUT_CTX_OFFSET() do {				\
+	if(arg->flags & A1C_NO_CTX_MEMBERS)				\
+		OUT("ASN_CTX_OFFSET_EXTERNAL,\n");			\
+	else							\
+		OUT("offsetof(%s, _asn_ctx),\n", c_name(arg).full_name); \
+} while(0)
 
 
 #define	DEPENDENCIES	do {						\
@@ -735,7 +750,7 @@ asn1c_lang_C_type_SEQUENCE_def(arg_t *arg, asn1c_ioc_table_and_objset_t *opt_ioc
 		MKID(expr), expr->_type_unique_index);
 	INDENT(+1);
 	OUT("sizeof(%s),\n", c_name(arg).full_name);
-	OUT("offsetof(%s, _asn_ctx),\n", c_name(arg).full_name);
+	OUT_CTX_OFFSET();
     emit_tag2member_reference(arg, expr, tag2el_count);
 	if(roms_count + aoms_count) {
 		OUT("asn_MAP_%s_oms_%d,\t/* Optional members */\n",
@@ -896,7 +911,7 @@ emit_set_specifics(arg_t *arg, asn1p_expr_t *expr, int tag2el_count,
 		MKID(expr), expr->_type_unique_index);
 	INDENTED(
 		OUT("sizeof(%s),\n", c_name(arg).full_name);
-		OUT("offsetof(%s, _asn_ctx),\n", c_name(arg).full_name);
+		OUT_CTX_OFFSET();
 		OUT("offsetof(%s, _presence_map),\n", c_name(arg).full_name);
 		emit_tag2member_reference(arg, expr, tag2el_count);
 		p = MKID(expr);
@@ -1269,8 +1284,11 @@ emit_set_extension_group_adapters(arg_t *arg, asn1p_expr_t *expr,
 			parent_id, unique_index, group_index);
 		INDENT(+1);
 		OUT("sizeof(%s),\t/* Group storage size */\n", group_names.full_name);
-		OUT("offsetof(%s, _asn_ctx),\t/* Group context offset */\n",
-			group_names.full_name);
+		if(arg->flags & A1C_NO_CTX_MEMBERS)
+			OUT("ASN_CTX_OFFSET_EXTERNAL,\t/* Group context offset */\n");
+		else
+			OUT("offsetof(%s, _asn_ctx),\t/* Group context offset */\n",
+				group_names.full_name);
 		OUT("0, 0,\t/* Tag map is not used by OER */\n");
 		if(optional_count) {
 			OUT("asn_MAP_%s_group_oms_%d_%d,\t/* Optional members */\n",
@@ -1707,7 +1725,7 @@ asn1c_lang_C_type_SEx_OF_def(arg_t *arg, int seq_of) {
 	    MKID(expr), expr->_type_unique_index);
 	INDENTED(
 	         OUT("sizeof(%s),\n", c_name(arg).full_name);
-	         OUT("offsetof(%s, _asn_ctx),\n", c_name(arg).full_name);
+	         OUT_CTX_OFFSET();
 	         {
 		         int as_xvl = expr_as_xmlvaluelist(arg, v);
 		         OUT("%d,\t/* XER encoding is %s */\n",
@@ -2178,7 +2196,7 @@ asn1c_lang_C_type_CHOICE_def(arg_t *arg) {
         expr->_type_unique_index);
     INDENTED(
         OUT("sizeof(%s),\n", c_name(arg).full_name);
-        OUT("offsetof(%s, _asn_ctx),\n", c_name(arg).full_name);
+        OUT_CTX_OFFSET();
         OUT("offsetof(%s, present),\n", c_name(arg).full_name);
         OUT("sizeof(((%s *)0)->present),\n", c_name(arg).full_name);
         emit_tag2member_reference(arg, expr, tag2el_count);

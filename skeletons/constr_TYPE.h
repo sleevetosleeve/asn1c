@@ -36,6 +36,61 @@ typedef struct asn_struct_ctx_s {
 	ber_tlv_len_t left;	/* Number of bytes left, -1 for indefinite */
 } asn_struct_ctx_t;
 
+/*
+ * Sentinel ctx_offset: the structure has no embedded _asn_ctx member.
+ * Emitted by "asn1c -fno-ctx-members"; decoders must then use the external
+ * decode context (asn_struct_external_ctx_t) carried in asn_codec_ctx_t.
+ */
+#define ASN_CTX_OFFSET_EXTERNAL ((unsigned)-1)
+
+/*
+ * External decode context: a per-decode-operation arena of parsing contexts,
+ * one frame per structure instance currently being decoded, keyed by the
+ * instance address. A single definition is shared by all generated types.
+ * The caller owns the arena: zero-initialize it once, reuse it across
+ * RC_WMORE resumes, and reset it with asn_struct_external_ctx_reset() before
+ * a fresh decode.
+ */
+typedef struct asn_struct_ctx_frame_s {
+	void *st;		/* Structure instance this frame belongs to */
+	asn_struct_ctx_t ctx;	/* Its parsing context */
+} asn_struct_ctx_frame_t;
+
+#define ASN_EXT_CTX_INLINE_FRAMES 8
+
+typedef struct asn_struct_external_ctx_s {
+	asn_struct_ctx_frame_t inline_frames[ASN_EXT_CTX_INLINE_FRAMES];
+	asn_struct_ctx_frame_t *heap_frames;	/* Overflow past the inline frames */
+	size_t frames_used;
+	size_t heap_capacity;
+} asn_struct_external_ctx_t;
+
+/* Find or create (zeroed) the frame for st. Returns 0 on failure. */
+asn_struct_ctx_t *asn_ext_ctx_get(asn_struct_external_ctx_t *ext, void *st);
+/*
+ * Release every frame's decoder scratch (ctx->ptr), free the heap overflow
+ * and zero the whole arena. Call before a fresh decode into the same
+ * structures; with preserve_partial_decoding, only after inspecting them.
+ */
+void asn_struct_external_ctx_reset(asn_struct_external_ctx_t *ext);
+
+struct asn_codec_ctx_s;	/* Forward declaration */
+
+/*
+ * Fetch the parsing context of structure st: from the external arena when the
+ * codec context carries one, otherwise from the embedded member at ctx_offset.
+ * Returns 0 when ctx_offset is ASN_CTX_OFFSET_EXTERNAL but no arena is set.
+ */
+asn_struct_ctx_t *asn_get_struct_ctx(const struct asn_codec_ctx_s *opt_codec_ctx,
+                                     void *st, unsigned ctx_offset);
+
+/* True when ctx_offset is a usable embedded offset or the external sentinel. */
+static inline int asn_ctx_offset_valid(unsigned struct_size, unsigned ctx_offset) {
+	if(ctx_offset == ASN_CTX_OFFSET_EXTERNAL) return 1;
+	return ctx_offset <= struct_size
+	    && sizeof(asn_struct_ctx_t) <= struct_size - ctx_offset;
+}
+
 #if !defined(ASN_DISABLE_BER_SUPPORT)
 #include <ber_decoder.h>  /* Basic Encoding Rules decoder */
 #include <der_encoder.h>  /* Distinguished Encoding Rules encoder */
@@ -132,6 +187,21 @@ typedef void (asn_struct_free_f)(
  */
 #define ASN_STRUCT_FREE_CONTENTS_ONLY(asn_DEF, ptr) \
     (asn_DEF).op->free_struct(&(asn_DEF), (ptr), ASFM_FREE_UNDERLYING)
+
+/*
+ * Variants of ASN_STRUCT_FREE / ASN_STRUCT_RESET for code generated with
+ * -fno-ctx-members: also release the structure's frame in the external
+ * decode context ext (which may be 0 if no decode is in progress).
+ */
+#define ASN_STRUCT_FREE_CTX(asn_DEF, ptr, ext) do { \
+    (asn_DEF).op->free_struct(&(asn_DEF), (ptr), ASFM_FREE_EVERYTHING); \
+    asn_struct_external_ctx_reset((ext)); \
+} while(0)
+
+#define ASN_STRUCT_RESET_CTX(asn_DEF, ptr, ext) do { \
+    (asn_DEF).op->free_struct(&(asn_DEF), (ptr), ASFM_FREE_UNDERLYING_AND_RESET); \
+    asn_struct_external_ctx_reset((ext)); \
+} while(0)
 
 /*
  * Print the structure according to its specification.

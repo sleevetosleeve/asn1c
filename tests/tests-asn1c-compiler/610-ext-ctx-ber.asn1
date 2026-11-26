@@ -1,0 +1,20 @@
+
+-- Phase 0 (BER/CER) regression module for -fno-ctx-members (issue #15):
+-- a SEQUENCE with an inline CHOICE of three SEQUENCE alternatives.
+
+NetMsg DEFINITIONS AUTOMATIC TAGS ::= BEGIN
+
+NetWorldRequest ::= SEQUENCE { x INTEGER, flag BOOLEAN }
+NetWorldState   ::= SEQUENCE { tick INTEGER }
+NetCharacterInput ::= SEQUENCE { key INTEGER }
+
+NetMsg ::= SEQUENCE {
+    id   INTEGER,
+    body CHOICE {
+        worldRequest   NetWorldRequest,
+        worldState     NetWorldState,
+        characterInput NetCharacterInput
+    }
+}
+
+END

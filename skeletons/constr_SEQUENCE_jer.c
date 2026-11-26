@@ -124,8 +124,7 @@ SEQUENCE_jer_flat_preflight(const asn_TYPE_descriptor_t *td,
                             size_t count) {
     size_t i, j;
     if(count == SIZE_MAX || count >= SHRT_MAX
-    || specs->ctx_offset > specs->struct_size
-    || sizeof(asn_struct_ctx_t) > specs->struct_size - specs->ctx_offset)
+    || !asn_ctx_offset_valid(specs->struct_size, specs->ctx_offset))
         return -1;
     for(i = 0; i < td->elements_count; i++) {
         const asn_TYPE_member_t *outer = &td->elements[i];
@@ -137,9 +136,8 @@ SEQUENCE_jer_flat_preflight(const asn_TYPE_descriptor_t *td,
             return -1;
         {
             const asn_SEQUENCE_specifics_t *group_specs = outer->type->specifics;
-            if(group_specs->ctx_offset > group_specs->struct_size
-            || sizeof(asn_struct_ctx_t)
-                > group_specs->struct_size - group_specs->ctx_offset) return -1;
+            if(!asn_ctx_offset_valid(group_specs->struct_size,
+                                      group_specs->ctx_offset)) return -1;
         }
         for(j = 0; j < outer->type->elements_count; j++) {
             const asn_TYPE_member_t *leaf = &outer->type->elements[j];
@@ -549,7 +547,8 @@ SEQUENCE_decode_jer_flat(const asn_codec_ctx_t *codec,
         st = *struct_ptr = CALLOC(1, specs->struct_size);
         if(!st) FLAT_RETURN(RC_FAIL);
     }
-    ctx = (asn_struct_ctx_t *)((char *)st + specs->ctx_offset);
+    ctx = asn_get_struct_ctx(codec, st, specs->ctx_offset);
+    if(!ctx) FLAT_RETURN(RC_FAIL);
     if(ASN__STACK_OVERFLOW_CHECK(codec)) FLAT_RETURN(RC_FAIL);
     if(ctx->step < 0 || (size_t)ctx->step > count) FLAT_RETURN(RC_FAIL);
     for(;;) {
@@ -811,7 +810,8 @@ SEQUENCE_decode_jer(const asn_codec_ctx_t *opt_codec_ctx,
     /*
      * Restore parsing context.
      */
-    ctx = (asn_struct_ctx_t *)((char *)st + specs->ctx_offset);
+    ctx = asn_get_struct_ctx(opt_codec_ctx, st, specs->ctx_offset);
+    if(!ctx) RETURN(RC_FAIL);
 
     /* Check recursion depth to prevent stack overflow */
     if(ASN__STACK_OVERFLOW_CHECK(opt_codec_ctx))

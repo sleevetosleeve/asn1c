@@ -10,6 +10,7 @@
 
 #include "asn_system.h"		/* for platform-dependent types */
 #include "asn_codecs.h"		/* for ASN.1 codecs specifics */
+struct asn_struct_external_ctx_s;	/* Forward declaration */
 #include "asn_config.h"
 
 #ifdef __cplusplus
@@ -169,6 +170,22 @@ asn_dec_rval_t asn_decode(
     const asn_codec_ctx_t *opt_codec_parameters, enum asn_transfer_syntax,
     const struct asn_TYPE_descriptor_s *type_to_decode,
     void **structure_ptr, /* Pointer to a target structure's pointer */
+    const void *buffer,   /* Data to be decoded */
+    size_t size           /* Size of that buffer */
+);
+
+/*
+ * Variant of asn_decode() for code generated with -fno-ctx-members:
+ * parsing contexts live in the caller-owned external arena ext_ctx
+ * (zero-initialized once, reused across RC_WMORE resumes, reset with
+ * asn_struct_external_ctx_reset() before a fresh decode).
+ * Passing NULL for ext_ctx behaves like asn_decode().
+ */
+asn_dec_rval_t asn_decode_ctx(
+    const asn_codec_ctx_t *opt_codec_parameters, enum asn_transfer_syntax,
+    const struct asn_TYPE_descriptor_s *type_to_decode,
+    void **structure_ptr, /* Pointer to a target structure's pointer */
+    struct asn_struct_external_ctx_s *ext_ctx, /* External parsing-context arena */
     const void *buffer,   /* Data to be decoded */
     size_t size           /* Size of that buffer */
 );

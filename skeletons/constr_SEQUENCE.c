@@ -101,8 +101,10 @@ SEQUENCE_free(const asn_TYPE_descriptor_t *td, void *sptr,
 	}
 
 	/* Clean parsing context */
-	ctx = (asn_struct_ctx_t *)((char *)sptr + specs->ctx_offset);
-	FREEMEM(ctx->ptr);
+	if(specs->ctx_offset != ASN_CTX_OFFSET_EXTERNAL) {
+		ctx = (asn_struct_ctx_t *)((char *)sptr + specs->ctx_offset);
+		FREEMEM(ctx->ptr);
+	}
 
     switch(method) {
     case ASFM_FREE_EVERYTHING:

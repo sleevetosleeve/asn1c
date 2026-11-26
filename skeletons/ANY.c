@@ -198,8 +198,7 @@ ANY_copy(const asn_TYPE_descriptor_t *td, void **aptr, const void *bptr) {
                 ? (const asn_OCTET_STRING_specifics_t *)td->specifics
                 : &asn_SPC_ANY_specs;
     if(specs->struct_size < sizeof(ANY_t)
-       || specs->ctx_offset > specs->struct_size
-       || sizeof(asn_struct_ctx_t) > specs->struct_size - specs->ctx_offset) {
+       || !asn_ctx_offset_valid(specs->struct_size, specs->ctx_offset)) {
         return -1;
     }
     destination = (ANY_t *)*aptr;

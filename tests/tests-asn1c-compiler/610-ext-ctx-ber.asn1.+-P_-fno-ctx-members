@@ -1,0 +1,806 @@
+
+/*** <<< INCLUDES [NetWorldRequest] >>> ***/
+
+#include <NativeInteger.h>
+#include <BOOLEAN.h>
+#include <constr_SEQUENCE.h>
+
+/*** <<< TYPE-DECLS [NetWorldRequest] >>> ***/
+
+typedef struct NetWorldRequest {
+	long	 x;
+	BOOLEAN_t	 flag;
+} NetWorldRequest_t;
+
+/*** <<< FUNC-DECLS [NetWorldRequest] >>> ***/
+
+extern asn_TYPE_descriptor_t asn_DEF_NetWorldRequest;
+extern asn_SEQUENCE_specifics_t asn_SPC_NetWorldRequest_specs_1;
+extern asn_TYPE_member_t asn_MBR_NetWorldRequest_1[2];
+
+/*** <<< STAT-DEFS [NetWorldRequest] >>> ***/
+
+asn_TYPE_member_t asn_MBR_NetWorldRequest_1[] = {
+	{ ATF_NOFLAGS, 0, offsetof(struct NetWorldRequest, x),
+		.tag = (ASN_TAG_CLASS_CONTEXT | (0 << 2)),
+		.tag_mode = -1,	/* IMPLICIT tag at current level */
+		.type = &asn_DEF_NativeInteger,
+		.type_selector = 0,
+		{
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+			.oer_constraints = 0,
+#endif  /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+			.per_constraints = 0,
+#endif  /* !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_JER_SUPPORT)
+			.jer_constraints = 0,
+#endif  /* !defined(ASN_DISABLE_JER_SUPPORT) */
+			.general_constraints = 0
+		},
+		0, 0, /* No default value */
+		.name = "x"
+		},
+	{ ATF_NOFLAGS, 0, offsetof(struct NetWorldRequest, flag),
+		.tag = (ASN_TAG_CLASS_CONTEXT | (1 << 2)),
+		.tag_mode = -1,	/* IMPLICIT tag at current level */
+		.type = &asn_DEF_BOOLEAN,
+		.type_selector = 0,
+		{
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+			.oer_constraints = 0,
+#endif  /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+			.per_constraints = 0,
+#endif  /* !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_JER_SUPPORT)
+			.jer_constraints = 0,
+#endif  /* !defined(ASN_DISABLE_JER_SUPPORT) */
+			.general_constraints = 0
+		},
+		0, 0, /* No default value */
+		.name = "flag"
+		},
+};
+static const ber_tlv_tag_t asn_DEF_NetWorldRequest_tags_1[] = {
+	(ASN_TAG_CLASS_UNIVERSAL | (16 << 2))
+};
+static const asn_TYPE_tag2member_t asn_MAP_NetWorldRequest_tag2el_1[] = {
+    { (ASN_TAG_CLASS_CONTEXT | (0 << 2)), 0, 0, 0 }, /* x */
+    { (ASN_TAG_CLASS_CONTEXT | (1 << 2)), 1, 0, 0 } /* flag */
+};
+asn_SEQUENCE_specifics_t asn_SPC_NetWorldRequest_specs_1 = {
+	sizeof(struct NetWorldRequest),
+	ASN_CTX_OFFSET_EXTERNAL,
+	.tag2el = asn_MAP_NetWorldRequest_tag2el_1,
+	.tag2el_count = 2,	/* Count of tags in the map */
+	0, 0, 0,	/* Optional elements (not needed) */
+	-1,	/* First extension addition */
+	0	/* Extension addition group body */
+};
+asn_TYPE_descriptor_t asn_DEF_NetWorldRequest = {
+	"NetWorldRequest",
+	"NetWorldRequest",
+	&asn_OP_SEQUENCE,
+	asn_DEF_NetWorldRequest_tags_1,
+	sizeof(asn_DEF_NetWorldRequest_tags_1)
+		/sizeof(asn_DEF_NetWorldRequest_tags_1[0]), /* 1 */
+	asn_DEF_NetWorldRequest_tags_1,	/* Same as above */
+	sizeof(asn_DEF_NetWorldRequest_tags_1)
+		/sizeof(asn_DEF_NetWorldRequest_tags_1[0]), /* 1 */
+	{
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+		0,
+#endif  /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+		0,
+#endif  /* !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_JER_SUPPORT)
+		0,
+#endif  /* !defined(ASN_DISABLE_JER_SUPPORT) */
+		SEQUENCE_constraint
+	},
+	asn_MBR_NetWorldRequest_1,
+	2,	/* Elements count */
+	&asn_SPC_NetWorldRequest_specs_1	/* Additional specs */
+};
+
+
+/*** <<< INCLUDES [NetWorldState] >>> ***/
+
+#include <NativeInteger.h>
+#include <constr_SEQUENCE.h>
+
+/*** <<< TYPE-DECLS [NetWorldState] >>> ***/
+
+typedef struct NetWorldState {
+	long	 tick;
+} NetWorldState_t;
+
+/*** <<< FUNC-DECLS [NetWorldState] >>> ***/
+
+extern asn_TYPE_descriptor_t asn_DEF_NetWorldState;
+extern asn_SEQUENCE_specifics_t asn_SPC_NetWorldState_specs_4;
+extern asn_TYPE_member_t asn_MBR_NetWorldState_4[1];
+
+/*** <<< STAT-DEFS [NetWorldState] >>> ***/
+
+asn_TYPE_member_t asn_MBR_NetWorldState_4[] = {
+	{ ATF_NOFLAGS, 0, offsetof(struct NetWorldState, tick),
+		.tag = (ASN_TAG_CLASS_CONTEXT | (0 << 2)),
+		.tag_mode = -1,	/* IMPLICIT tag at current level */
+		.type = &asn_DEF_NativeInteger,
+		.type_selector = 0,
+		{
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+			.oer_constraints = 0,
+#endif  /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+			.per_constraints = 0,
+#endif  /* !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_JER_SUPPORT)
+			.jer_constraints = 0,
+#endif  /* !defined(ASN_DISABLE_JER_SUPPORT) */
+			.general_constraints = 0
+		},
+		0, 0, /* No default value */
+		.name = "tick"
+		},
+};
+static const ber_tlv_tag_t asn_DEF_NetWorldState_tags_4[] = {
+	(ASN_TAG_CLASS_UNIVERSAL | (16 << 2))
+};
+static const asn_TYPE_tag2member_t asn_MAP_NetWorldState_tag2el_4[] = {
+    { (ASN_TAG_CLASS_CONTEXT | (0 << 2)), 0, 0, 0 } /* tick */
+};
+asn_SEQUENCE_specifics_t asn_SPC_NetWorldState_specs_4 = {
+	sizeof(struct NetWorldState),
+	ASN_CTX_OFFSET_EXTERNAL,
+	.tag2el = asn_MAP_NetWorldState_tag2el_4,
+	.tag2el_count = 1,	/* Count of tags in the map */
+	0, 0, 0,	/* Optional elements (not needed) */
+	-1,	/* First extension addition */
+	0	/* Extension addition group body */
+};
+asn_TYPE_descriptor_t asn_DEF_NetWorldState = {
+	"NetWorldState",
+	"NetWorldState",
+	&asn_OP_SEQUENCE,
+	asn_DEF_NetWorldState_tags_4,
+	sizeof(asn_DEF_NetWorldState_tags_4)
+		/sizeof(asn_DEF_NetWorldState_tags_4[0]), /* 1 */
+	asn_DEF_NetWorldState_tags_4,	/* Same as above */
+	sizeof(asn_DEF_NetWorldState_tags_4)
+		/sizeof(asn_DEF_NetWorldState_tags_4[0]), /* 1 */
+	{
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+		0,
+#endif  /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+		0,
+#endif  /* !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_JER_SUPPORT)
+		0,
+#endif  /* !defined(ASN_DISABLE_JER_SUPPORT) */
+		SEQUENCE_constraint
+	},
+	asn_MBR_NetWorldState_4,
+	1,	/* Elements count */
+	&asn_SPC_NetWorldState_specs_4	/* Additional specs */
+};
+
+
+/*** <<< INCLUDES [NetCharacterInput] >>> ***/
+
+#include <NativeInteger.h>
+#include <constr_SEQUENCE.h>
+
+/*** <<< TYPE-DECLS [NetCharacterInput] >>> ***/
+
+typedef struct NetCharacterInput {
+	long	 key;
+} NetCharacterInput_t;
+
+/*** <<< FUNC-DECLS [NetCharacterInput] >>> ***/
+
+extern asn_TYPE_descriptor_t asn_DEF_NetCharacterInput;
+extern asn_SEQUENCE_specifics_t asn_SPC_NetCharacterInput_specs_6;
+extern asn_TYPE_member_t asn_MBR_NetCharacterInput_6[1];
+
+/*** <<< STAT-DEFS [NetCharacterInput] >>> ***/
+
+asn_TYPE_member_t asn_MBR_NetCharacterInput_6[] = {
+	{ ATF_NOFLAGS, 0, offsetof(struct NetCharacterInput, key),
+		.tag = (ASN_TAG_CLASS_CONTEXT | (0 << 2)),
+		.tag_mode = -1,	/* IMPLICIT tag at current level */
+		.type = &asn_DEF_NativeInteger,
+		.type_selector = 0,
+		{
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+			.oer_constraints = 0,
+#endif  /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+			.per_constraints = 0,
+#endif  /* !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_JER_SUPPORT)
+			.jer_constraints = 0,
+#endif  /* !defined(ASN_DISABLE_JER_SUPPORT) */
+			.general_constraints = 0
+		},
+		0, 0, /* No default value */
+		.name = "key"
+		},
+};
+static const ber_tlv_tag_t asn_DEF_NetCharacterInput_tags_6[] = {
+	(ASN_TAG_CLASS_UNIVERSAL | (16 << 2))
+};
+static const asn_TYPE_tag2member_t asn_MAP_NetCharacterInput_tag2el_6[] = {
+    { (ASN_TAG_CLASS_CONTEXT | (0 << 2)), 0, 0, 0 } /* key */
+};
+asn_SEQUENCE_specifics_t asn_SPC_NetCharacterInput_specs_6 = {
+	sizeof(struct NetCharacterInput),
+	ASN_CTX_OFFSET_EXTERNAL,
+	.tag2el = asn_MAP_NetCharacterInput_tag2el_6,
+	.tag2el_count = 1,	/* Count of tags in the map */
+	0, 0, 0,	/* Optional elements (not needed) */
+	-1,	/* First extension addition */
+	0	/* Extension addition group body */
+};
+asn_TYPE_descriptor_t asn_DEF_NetCharacterInput = {
+	"NetCharacterInput",
+	"NetCharacterInput",
+	&asn_OP_SEQUENCE,
+	asn_DEF_NetCharacterInput_tags_6,
+	sizeof(asn_DEF_NetCharacterInput_tags_6)
+		/sizeof(asn_DEF_NetCharacterInput_tags_6[0]), /* 1 */
+	asn_DEF_NetCharacterInput_tags_6,	/* Same as above */
+	sizeof(asn_DEF_NetCharacterInput_tags_6)
+		/sizeof(asn_DEF_NetCharacterInput_tags_6[0]), /* 1 */
+	{
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+		0,
+#endif  /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+		0,
+#endif  /* !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_JER_SUPPORT)
+		0,
+#endif  /* !defined(ASN_DISABLE_JER_SUPPORT) */
+		SEQUENCE_constraint
+	},
+	asn_MBR_NetCharacterInput_6,
+	1,	/* Elements count */
+	&asn_SPC_NetCharacterInput_specs_6	/* Additional specs */
+};
+
+
+/*** <<< INCLUDES [NetMsg] >>> ***/
+
+#include <NativeInteger.h>
+#include "NetWorldRequest.h"
+#include "NetWorldState.h"
+#include "NetCharacterInput.h"
+#include <constr_CHOICE.h>
+#include <constr_SEQUENCE.h>
+
+/*** <<< DEPS [NetMsg] >>> ***/
+
+typedef enum body_PR {
+	body_PR_NOTHING,	/* No components present */
+	body_PR_worldRequest,
+	body_PR_worldState,
+	body_PR_characterInput
+} body_PR;
+
+/*** <<< TYPE-DECLS [NetMsg] >>> ***/
+
+typedef struct NetMsg {
+	long	 id;
+	struct body {
+		body_PR present;
+		union NetMsg__body_u {
+			NetWorldRequest_t	 worldRequest;
+			NetWorldState_t	 worldState;
+			NetCharacterInput_t	 characterInput;
+		} choice;
+	} body;
+} NetMsg_t;
+
+/*** <<< FUNC-DECLS [NetMsg] >>> ***/
+
+extern asn_TYPE_descriptor_t asn_DEF_NetMsg;
+
+/*** <<< CODE [NetMsg] >>> ***/
+
+#ifndef ASN1C_NO_UNSUFFIXED_PDU_ALIAS
+#if defined(__ELF__) && (defined(__GNUC__) || defined(__clang__))
+extern asn_TYPE_descriptor_t asn_DEF_body __attribute__((weak, alias("asn_DEF_body_10")));
+#else
+static asn_TYPE_descriptor_t asn_DEF_body_10;
+static asn_TYPE_descriptor_t asn_DEF_body;
+__attribute__((constructor)) static void asn_DEF_body_10_alias_init(void) {
+	asn_DEF_body = asn_DEF_body_10;
+}
+#endif
+#endif /* ASN1C_NO_UNSUFFIXED_PDU_ALIAS */
+
+/*** <<< STAT-DEFS [NetMsg] >>> ***/
+
+static asn_TYPE_member_t asn_MBR_NetMsg__body_10[] = {
+	{ ATF_NOFLAGS, 0, offsetof(struct body, choice.worldRequest),
+		.tag = (ASN_TAG_CLASS_CONTEXT | (0 << 2)),
+		.tag_mode = -1,	/* IMPLICIT tag at current level */
+		.type = &asn_DEF_NetWorldRequest,
+		.type_selector = 0,
+		{
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+			.oer_constraints = 0,
+#endif  /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+			.per_constraints = 0,
+#endif  /* !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_JER_SUPPORT)
+			.jer_constraints = 0,
+#endif  /* !defined(ASN_DISABLE_JER_SUPPORT) */
+			.general_constraints = 0
+		},
+		0, 0, /* No default value */
+		.name = "worldRequest"
+		},
+	{ ATF_NOFLAGS, 0, offsetof(struct body, choice.worldState),
+		.tag = (ASN_TAG_CLASS_CONTEXT | (1 << 2)),
+		.tag_mode = -1,	/* IMPLICIT tag at current level */
+		.type = &asn_DEF_NetWorldState,
+		.type_selector = 0,
+		{
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+			.oer_constraints = 0,
+#endif  /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+			.per_constraints = 0,
+#endif  /* !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_JER_SUPPORT)
+			.jer_constraints = 0,
+#endif  /* !defined(ASN_DISABLE_JER_SUPPORT) */
+			.general_constraints = 0
+		},
+		0, 0, /* No default value */
+		.name = "worldState"
+		},
+	{ ATF_NOFLAGS, 0, offsetof(struct body, choice.characterInput),
+		.tag = (ASN_TAG_CLASS_CONTEXT | (2 << 2)),
+		.tag_mode = -1,	/* IMPLICIT tag at current level */
+		.type = &asn_DEF_NetCharacterInput,
+		.type_selector = 0,
+		{
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+			.oer_constraints = 0,
+#endif  /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+			.per_constraints = 0,
+#endif  /* !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_JER_SUPPORT)
+			.jer_constraints = 0,
+#endif  /* !defined(ASN_DISABLE_JER_SUPPORT) */
+			.general_constraints = 0
+		},
+		0, 0, /* No default value */
+		.name = "characterInput"
+		},
+};
+static const asn_TYPE_tag2member_t asn_MAP_body_tag2el_10[] = {
+    { (ASN_TAG_CLASS_CONTEXT | (0 << 2)), 0, 0, 0 }, /* worldRequest */
+    { (ASN_TAG_CLASS_CONTEXT | (1 << 2)), 1, 0, 0 }, /* worldState */
+    { (ASN_TAG_CLASS_CONTEXT | (2 << 2)), 2, 0, 0 } /* characterInput */
+};
+static asn_CHOICE_specifics_t asn_SPC_body_specs_10 = {
+	sizeof(struct body),
+	ASN_CTX_OFFSET_EXTERNAL,
+	offsetof(struct body, present),
+	sizeof(((struct body *)0)->present),
+	.tag2el = asn_MAP_body_tag2el_10,
+	.tag2el_count = 3,	/* Count of tags in the map */
+	0, 0,
+	.first_extension = -1	/* Extensions start */
+};
+static /* Use -fall-defs-global to expose */
+asn_TYPE_descriptor_t asn_DEF_body_10 = {
+	"body",
+	"body",
+	&asn_OP_CHOICE,
+	0,	/* No effective tags (pointer) */
+	0,	/* No effective tags (count) */
+	0,	/* No tags (pointer) */
+	0,	/* No tags (count) */
+	{
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+		0,
+#endif  /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+		0,
+#endif  /* !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_JER_SUPPORT)
+		0,
+#endif  /* !defined(ASN_DISABLE_JER_SUPPORT) */
+		CHOICE_constraint
+	},
+	asn_MBR_NetMsg__body_10,
+	3,	/* Elements count */
+	&asn_SPC_body_specs_10	/* Additional specs */
+};
+
+static asn_TYPE_member_t asn_MBR_NetMsg_8[] = {
+	{ ATF_NOFLAGS, 0, offsetof(struct NetMsg, id),
+		.tag = (ASN_TAG_CLASS_CONTEXT | (0 << 2)),
+		.tag_mode = -1,	/* IMPLICIT tag at current level */
+		.type = &asn_DEF_NativeInteger,
+		.type_selector = 0,
+		{
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+			.oer_constraints = 0,
+#endif  /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+			.per_constraints = 0,
+#endif  /* !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_JER_SUPPORT)
+			.jer_constraints = 0,
+#endif  /* !defined(ASN_DISABLE_JER_SUPPORT) */
+			.general_constraints = 0
+		},
+		0, 0, /* No default value */
+		.name = "id"
+		},
+	{ ATF_NOFLAGS, 0, offsetof(struct NetMsg, body),
+		.tag = (ASN_TAG_CLASS_CONTEXT | (1 << 2)),
+		.tag_mode = +1,	/* EXPLICIT tag at current level */
+		.type = &asn_DEF_body_10,
+		.type_selector = 0,
+		{
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+			.oer_constraints = 0,
+#endif  /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+			.per_constraints = 0,
+#endif  /* !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_JER_SUPPORT)
+			.jer_constraints = 0,
+#endif  /* !defined(ASN_DISABLE_JER_SUPPORT) */
+			.general_constraints = 0
+		},
+		0, 0, /* No default value */
+		.name = "body"
+		},
+};
+static const ber_tlv_tag_t asn_DEF_NetMsg_tags_8[] = {
+	(ASN_TAG_CLASS_UNIVERSAL | (16 << 2))
+};
+static const asn_TYPE_tag2member_t asn_MAP_NetMsg_tag2el_8[] = {
+    { (ASN_TAG_CLASS_CONTEXT | (0 << 2)), 0, 0, 0 }, /* id */
+    { (ASN_TAG_CLASS_CONTEXT | (1 << 2)), 1, 0, 0 } /* body */
+};
+static asn_SEQUENCE_specifics_t asn_SPC_NetMsg_specs_8 = {
+	sizeof(struct NetMsg),
+	ASN_CTX_OFFSET_EXTERNAL,
+	.tag2el = asn_MAP_NetMsg_tag2el_8,
+	.tag2el_count = 2,	/* Count of tags in the map */
+	0, 0, 0,	/* Optional elements (not needed) */
+	-1,	/* First extension addition */
+	0	/* Extension addition group body */
+};
+asn_TYPE_descriptor_t asn_DEF_NetMsg = {
+	"NetMsg",
+	"NetMsg",
+	&asn_OP_SEQUENCE,
+	asn_DEF_NetMsg_tags_8,
+	sizeof(asn_DEF_NetMsg_tags_8)
+		/sizeof(asn_DEF_NetMsg_tags_8[0]), /* 1 */
+	asn_DEF_NetMsg_tags_8,	/* Same as above */
+	sizeof(asn_DEF_NetMsg_tags_8)
+		/sizeof(asn_DEF_NetMsg_tags_8[0]), /* 1 */
+	{
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+		0,
+#endif  /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+		0,
+#endif  /* !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_JER_SUPPORT)
+		0,
+#endif  /* !defined(ASN_DISABLE_JER_SUPPORT) */
+		SEQUENCE_constraint
+	},
+	asn_MBR_NetMsg_8,
+	2,	/* Elements count */
+	&asn_SPC_NetMsg_specs_8	/* Additional specs */
+};
+
+
+/*** <<< INCLUDES [EXTERNAL] >>> ***/
+
+#include <OBJECT_IDENTIFIER.h>
+#include <NativeInteger.h>
+#include <ObjectDescriptor.h>
+#include <ANY.h>
+#include <OCTET_STRING.h>
+#include <BIT_STRING.h>
+#include <constr_CHOICE.h>
+#include <constr_SEQUENCE.h>
+
+/*** <<< DEPS [EXTERNAL] >>> ***/
+
+typedef enum encoding_PR {
+	encoding_PR_NOTHING,	/* No components present */
+	encoding_PR_single_ASN1_type,
+	encoding_PR_octet_aligned,
+	encoding_PR_arbitrary
+} encoding_PR;
+
+/*** <<< TYPE-DECLS [EXTERNAL] >>> ***/
+
+typedef struct EXTERNAL {
+	OBJECT_IDENTIFIER_t	*direct_reference;	/* OPTIONAL */
+	long	*indirect_reference;	/* OPTIONAL */
+	ObjectDescriptor_t	*data_value_descriptor;	/* OPTIONAL */
+	struct encoding {
+		encoding_PR present;
+		union EXTERNAL__encoding_u {
+			ANY_t	 single_ASN1_type;
+			OCTET_STRING_t	 octet_aligned;
+			BIT_STRING_t	 arbitrary;
+		} choice;
+	} encoding;
+} EXTERNAL_t;
+
+/*** <<< FUNC-DECLS [EXTERNAL] >>> ***/
+
+extern asn_TYPE_descriptor_t asn_DEF_EXTERNAL;
+
+/*** <<< CODE [EXTERNAL] >>> ***/
+
+#ifndef ASN1C_NO_UNSUFFIXED_PDU_ALIAS
+#if defined(__ELF__) && (defined(__GNUC__) || defined(__clang__))
+extern asn_TYPE_descriptor_t asn_DEF_encoding __attribute__((weak, alias("asn_DEF_encoding_29")));
+#else
+static asn_TYPE_descriptor_t asn_DEF_encoding_29;
+static asn_TYPE_descriptor_t asn_DEF_encoding;
+__attribute__((constructor)) static void asn_DEF_encoding_29_alias_init(void) {
+	asn_DEF_encoding = asn_DEF_encoding_29;
+}
+#endif
+#endif /* ASN1C_NO_UNSUFFIXED_PDU_ALIAS */
+
+/*** <<< STAT-DEFS [EXTERNAL] >>> ***/
+
+static asn_TYPE_member_t asn_MBR_EXTERNAL__encoding_29[] = {
+	{ ATF_NOFLAGS, 0, offsetof(struct encoding, choice.single_ASN1_type),
+		.tag = (ASN_TAG_CLASS_CONTEXT | (0 << 2)),
+		.tag_mode = +1,	/* EXPLICIT tag at current level */
+		.type = &asn_DEF_ANY,
+		.type_selector = 0,
+		{
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+			.oer_constraints = 0,
+#endif  /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+			.per_constraints = 0,
+#endif  /* !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_JER_SUPPORT)
+			.jer_constraints = 0,
+#endif  /* !defined(ASN_DISABLE_JER_SUPPORT) */
+			.general_constraints = 0
+		},
+		0, 0, /* No default value */
+		.name = "single-ASN1-type"
+		},
+	{ ATF_NOFLAGS, 0, offsetof(struct encoding, choice.octet_aligned),
+		.tag = (ASN_TAG_CLASS_CONTEXT | (1 << 2)),
+		.tag_mode = -1,	/* IMPLICIT tag at current level */
+		.type = &asn_DEF_OCTET_STRING,
+		.type_selector = 0,
+		{
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+			.oer_constraints = 0,
+#endif  /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+			.per_constraints = 0,
+#endif  /* !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_JER_SUPPORT)
+			.jer_constraints = 0,
+#endif  /* !defined(ASN_DISABLE_JER_SUPPORT) */
+			.general_constraints = 0
+		},
+		0, 0, /* No default value */
+		.name = "octet-aligned"
+		},
+	{ ATF_NOFLAGS, 0, offsetof(struct encoding, choice.arbitrary),
+		.tag = (ASN_TAG_CLASS_CONTEXT | (2 << 2)),
+		.tag_mode = -1,	/* IMPLICIT tag at current level */
+		.type = &asn_DEF_BIT_STRING,
+		.type_selector = 0,
+		{
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+			.oer_constraints = 0,
+#endif  /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+			.per_constraints = 0,
+#endif  /* !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_JER_SUPPORT)
+			.jer_constraints = 0,
+#endif  /* !defined(ASN_DISABLE_JER_SUPPORT) */
+			.general_constraints = 0
+		},
+		0, 0, /* No default value */
+		.name = "arbitrary"
+		},
+};
+static const asn_TYPE_tag2member_t asn_MAP_encoding_tag2el_29[] = {
+    { (ASN_TAG_CLASS_CONTEXT | (0 << 2)), 0, 0, 0 }, /* single-ASN1-type */
+    { (ASN_TAG_CLASS_CONTEXT | (1 << 2)), 1, 0, 0 }, /* octet-aligned */
+    { (ASN_TAG_CLASS_CONTEXT | (2 << 2)), 2, 0, 0 } /* arbitrary */
+};
+static asn_CHOICE_specifics_t asn_SPC_encoding_specs_29 = {
+	sizeof(struct encoding),
+	ASN_CTX_OFFSET_EXTERNAL,
+	offsetof(struct encoding, present),
+	sizeof(((struct encoding *)0)->present),
+	.tag2el = asn_MAP_encoding_tag2el_29,
+	.tag2el_count = 3,	/* Count of tags in the map */
+	0, 0,
+	.first_extension = -1	/* Extensions start */
+};
+static /* Use -fall-defs-global to expose */
+asn_TYPE_descriptor_t asn_DEF_encoding_29 = {
+	"encoding",
+	"encoding",
+	&asn_OP_CHOICE,
+	0,	/* No effective tags (pointer) */
+	0,	/* No effective tags (count) */
+	0,	/* No tags (pointer) */
+	0,	/* No tags (count) */
+	{
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+		0,
+#endif  /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+		0,
+#endif  /* !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_JER_SUPPORT)
+		0,
+#endif  /* !defined(ASN_DISABLE_JER_SUPPORT) */
+		CHOICE_constraint
+	},
+	asn_MBR_EXTERNAL__encoding_29,
+	3,	/* Elements count */
+	&asn_SPC_encoding_specs_29	/* Additional specs */
+};
+
+static asn_TYPE_member_t asn_MBR_EXTERNAL_25[] = {
+	{ ATF_POINTER, 3, offsetof(struct EXTERNAL, direct_reference),
+		.tag = (ASN_TAG_CLASS_UNIVERSAL | (6 << 2)),
+		.tag_mode = 0,
+		.type = &asn_DEF_OBJECT_IDENTIFIER,
+		.type_selector = 0,
+		{
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+			.oer_constraints = 0,
+#endif  /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+			.per_constraints = 0,
+#endif  /* !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_JER_SUPPORT)
+			.jer_constraints = 0,
+#endif  /* !defined(ASN_DISABLE_JER_SUPPORT) */
+			.general_constraints = 0
+		},
+		0, 0, /* No default value */
+		.name = "direct-reference"
+		},
+	{ ATF_POINTER, 2, offsetof(struct EXTERNAL, indirect_reference),
+		.tag = (ASN_TAG_CLASS_UNIVERSAL | (2 << 2)),
+		.tag_mode = 0,
+		.type = &asn_DEF_NativeInteger,
+		.type_selector = 0,
+		{
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+			.oer_constraints = 0,
+#endif  /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+			.per_constraints = 0,
+#endif  /* !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_JER_SUPPORT)
+			.jer_constraints = 0,
+#endif  /* !defined(ASN_DISABLE_JER_SUPPORT) */
+			.general_constraints = 0
+		},
+		0, 0, /* No default value */
+		.name = "indirect-reference"
+		},
+	{ ATF_POINTER, 1, offsetof(struct EXTERNAL, data_value_descriptor),
+		.tag = (ASN_TAG_CLASS_UNIVERSAL | (7 << 2)),
+		.tag_mode = 0,
+		.type = &asn_DEF_ObjectDescriptor,
+		.type_selector = 0,
+		{
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+			.oer_constraints = 0,
+#endif  /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+			.per_constraints = 0,
+#endif  /* !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_JER_SUPPORT)
+			.jer_constraints = 0,
+#endif  /* !defined(ASN_DISABLE_JER_SUPPORT) */
+			.general_constraints = 0
+		},
+		0, 0, /* No default value */
+		.name = "data-value-descriptor"
+		},
+	{ ATF_NOFLAGS, 0, offsetof(struct EXTERNAL, encoding),
+		.tag = -1 /* Ambiguous tag (CHOICE?) */,
+		.tag_mode = 0,
+		.type = &asn_DEF_encoding_29,
+		.type_selector = 0,
+		{
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+			.oer_constraints = 0,
+#endif  /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+			.per_constraints = 0,
+#endif  /* !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_JER_SUPPORT)
+			.jer_constraints = 0,
+#endif  /* !defined(ASN_DISABLE_JER_SUPPORT) */
+			.general_constraints = 0
+		},
+		0, 0, /* No default value */
+		.name = "encoding"
+		},
+};
+static const ber_tlv_tag_t asn_DEF_EXTERNAL_tags_25[] = {
+	(ASN_TAG_CLASS_UNIVERSAL | (8 << 2)),
+	(ASN_TAG_CLASS_UNIVERSAL | (16 << 2))
+};
+static const asn_TYPE_tag2member_t asn_MAP_EXTERNAL_tag2el_25[] = {
+    { (ASN_TAG_CLASS_UNIVERSAL | (2 << 2)), 1, 0, 0 }, /* indirect-reference */
+    { (ASN_TAG_CLASS_UNIVERSAL | (6 << 2)), 0, 0, 0 }, /* direct-reference */
+    { (ASN_TAG_CLASS_UNIVERSAL | (7 << 2)), 2, 0, 0 }, /* data-value-descriptor */
+    { (ASN_TAG_CLASS_CONTEXT | (0 << 2)), 3, 0, 0 }, /* single-ASN1-type */
+    { (ASN_TAG_CLASS_CONTEXT | (1 << 2)), 3, 0, 0 }, /* octet-aligned */
+    { (ASN_TAG_CLASS_CONTEXT | (2 << 2)), 3, 0, 0 } /* arbitrary */
+};
+static asn_SEQUENCE_specifics_t asn_SPC_EXTERNAL_specs_25 = {
+	sizeof(struct EXTERNAL),
+	ASN_CTX_OFFSET_EXTERNAL,
+	.tag2el = asn_MAP_EXTERNAL_tag2el_25,
+	.tag2el_count = 6,	/* Count of tags in the map */
+	0, 0, 0,	/* Optional elements (not needed) */
+	-1,	/* First extension addition */
+	0	/* Extension addition group body */
+};
+asn_TYPE_descriptor_t asn_DEF_EXTERNAL = {
+	"EXTERNAL",
+	"EXTERNAL",
+	&asn_OP_SEQUENCE,
+	asn_DEF_EXTERNAL_tags_25,
+	sizeof(asn_DEF_EXTERNAL_tags_25)
+		/sizeof(asn_DEF_EXTERNAL_tags_25[0]) - 1, /* 1 */
+	asn_DEF_EXTERNAL_tags_25,	/* Same as above */
+	sizeof(asn_DEF_EXTERNAL_tags_25)
+		/sizeof(asn_DEF_EXTERNAL_tags_25[0]), /* 2 */
+	{
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+		0,
+#endif  /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+		0,
+#endif  /* !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_JER_SUPPORT)
+		0,
+#endif  /* !defined(ASN_DISABLE_JER_SUPPORT) */
+		SEQUENCE_constraint
+	},
+	asn_MBR_EXTERNAL_25,
+	4,	/* Elements count */
+	&asn_SPC_EXTERNAL_specs_25	/* Additional specs */
+};
+

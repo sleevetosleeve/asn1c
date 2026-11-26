@@ -150,8 +150,7 @@ SET_oer_descriptor_valid(const asn_TYPE_descriptor_t *td,
     if(!td || !specs || !specs->struct_size) return -1;
     if(td->elements_count && !td->elements) return -1;
     if(td->elements_count && !specs->_mandatory_elements) return -1;
-    if(specs->ctx_offset > specs->struct_size) return -1;
-    if(sizeof(asn_struct_ctx_t) > specs->struct_size - specs->ctx_offset)
+    if(!asn_ctx_offset_valid(specs->struct_size, specs->ctx_offset))
         return -1;
     return 0;
 }
@@ -741,7 +740,8 @@ SET_oer_decode_args_valid(const asn_codec_ctx_t *codec,
  * Example: a phase 1000 preamble owns its bit reader only after allocation.
  */
 static int
-SET_oer_prepare_decode(const asn_TYPE_descriptor_t *td,
+SET_oer_prepare_decode(const asn_codec_ctx_t *codec,
+                       const asn_TYPE_descriptor_t *td,
                        const asn_SET_specifics_t *specs, void **value,
                        const unsigned *order, size_t optional_count,
                        asn_struct_ctx_t **context) {
@@ -753,7 +753,8 @@ SET_oer_prepare_decode(const asn_TYPE_descriptor_t *td,
         if(!st) return -1;
     }
     if(SET_oer_members_valid(td, st)) return -1;
-    ctx = (asn_struct_ctx_t *)((char *)st + specs->ctx_offset);
+    ctx = asn_get_struct_ctx(codec, st, specs->ctx_offset);
+    if(!ctx) return -1;
     if(ctx->phase == SET_OER_PHASE_COMPLETE) return -1;
     if(ctx->phase != 0 && ctx->phase != SET_OER_PHASE_INITIAL
     && ctx->phase != ASN_SET_OER_PHASE_MEMBERS
@@ -1370,8 +1371,8 @@ SET_decode_oer(const asn_codec_ctx_t *opt_codec_ctx,
     if(SET_oer_build_order(td, specs, &order, &optional_count)) return rval;
     root_count = specs->extensible >= 2
         ? specs->root_count : td->elements_count;
-    if(SET_oer_prepare_decode(td, specs, struct_ptr, order, optional_count,
-                             &ctx)) {
+    if(SET_oer_prepare_decode(opt_codec_ctx, td, specs, struct_ptr, order,
+                             optional_count, &ctx)) {
         st = *struct_ptr;
         goto done;
     }

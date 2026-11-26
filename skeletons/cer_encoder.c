@@ -2729,8 +2729,7 @@ cer_validate_set_group(cer_context_t *ctx,
     }
     specs = (const asn_SET_specifics_t *)td->specifics;
     if(!specs->_mandatory_elements || specs->struct_size != structure_size ||
-       specs->ctx_offset > structure_size ||
-       sizeof(asn_struct_ctx_t) > structure_size - specs->ctx_offset) {
+       !asn_ctx_offset_valid(structure_size, specs->ctx_offset)) {
         return cer_fail(ctx, EBADF, td, value);
     }
     words = ((size_t)td->elements_count + bits - 1) / bits;

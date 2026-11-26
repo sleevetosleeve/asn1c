@@ -4,12 +4,76 @@
  */
 #include <asn_internal.h>
 #include <constr_TYPE.h>
+#include <asn_application.h>
 #include <errno.h>
+#include <stdlib.h>
+#include <string.h>
 
 /*
  * Version of the ASN.1 infrastructure shipped with compiler.
  */
 int get_asn1c_environment_version(void) { return ASN1C_ENVIRONMENT_VERSION; }
+
+/*
+ * External decode context arena (see constr_TYPE.h). One arena per top-level
+ * decode operation; frames are keyed by the structure instance address so
+ * that RC_WMORE resumes find the same frame again.
+ */
+asn_struct_ctx_t *asn_ext_ctx_get(asn_struct_external_ctx_t *ext, void *st) {
+	size_t i;
+	if(!ext || !st) return 0;
+	for(i = 0; i < ext->frames_used && i < ASN_EXT_CTX_INLINE_FRAMES; i++)
+		if(ext->inline_frames[i].st == st)
+			return &ext->inline_frames[i].ctx;
+	if(ext->frames_used > ASN_EXT_CTX_INLINE_FRAMES)
+		for(i = ASN_EXT_CTX_INLINE_FRAMES; i < ext->frames_used; i++)
+			if(ext->heap_frames[i - ASN_EXT_CTX_INLINE_FRAMES].st == st)
+				return &ext->heap_frames[i - ASN_EXT_CTX_INLINE_FRAMES].ctx;
+	if(ext->frames_used < ASN_EXT_CTX_INLINE_FRAMES) {
+		asn_struct_ctx_frame_t *f = &ext->inline_frames[ext->frames_used++];
+		f->st = st;
+		memset(&f->ctx, 0, sizeof(f->ctx));
+		return &f->ctx;
+	}
+	if(ext->frames_used - ASN_EXT_CTX_INLINE_FRAMES >= ext->heap_capacity) {
+		size_t ncap = ext->heap_capacity ? ext->heap_capacity * 2 : 8;
+		asn_struct_ctx_frame_t *nf = (asn_struct_ctx_frame_t *)
+			realloc(ext->heap_frames, ncap * sizeof(*nf));
+		if(!nf) return 0;
+		ext->heap_frames = nf;
+		ext->heap_capacity = ncap;
+	}
+	{
+		asn_struct_ctx_frame_t *f =
+			&ext->heap_frames[ext->frames_used - ASN_EXT_CTX_INLINE_FRAMES];
+		ext->frames_used++;
+		f->st = st;
+		memset(&f->ctx, 0, sizeof(f->ctx));
+		return &f->ctx;
+	}
+}
+
+
+void asn_struct_external_ctx_reset(asn_struct_external_ctx_t *ext) {
+	size_t i;
+	if(!ext) return;
+	for(i = 0; i < ext->frames_used && i < ASN_EXT_CTX_INLINE_FRAMES; i++)
+		FREEMEM(ext->inline_frames[i].ctx.ptr);
+	if(ext->frames_used > ASN_EXT_CTX_INLINE_FRAMES)
+		for(i = ASN_EXT_CTX_INLINE_FRAMES; i < ext->frames_used; i++)
+			FREEMEM(ext->heap_frames[i - ASN_EXT_CTX_INLINE_FRAMES].ctx.ptr);
+	free(ext->heap_frames);
+	memset(ext, 0, sizeof(*ext));
+}
+
+asn_struct_ctx_t *asn_get_struct_ctx(const asn_codec_ctx_t *opt_codec_ctx,
+                                     void *st, unsigned ctx_offset) {
+	if(opt_codec_ctx && opt_codec_ctx->ext_struct_ctx)
+		return asn_ext_ctx_get(
+			(asn_struct_external_ctx_t *)opt_codec_ctx->ext_struct_ctx, st);
+	if(!st || ctx_offset == ASN_CTX_OFFSET_EXTERNAL) return 0;
+	return (asn_struct_ctx_t *)((char *)st + ctx_offset);
+}
 
 static asn_app_consume_bytes_f _print2fp;
 

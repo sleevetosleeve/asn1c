@@ -28,8 +28,7 @@ SET_OF_cbor_shape(const asn_TYPE_descriptor_t *td) {
        || !td->elements[0].type->op->free_struct) return -1;
     specs = td->specifics;
     if(specs->struct_size < sizeof(asn_anonymous_set_)
-       || specs->ctx_offset > specs->struct_size
-       || sizeof(asn_struct_ctx_t) > specs->struct_size - specs->ctx_offset) return -1;
+       || !asn_ctx_offset_valid(specs->struct_size, specs->ctx_offset)) return -1;
     return 0;
 }
 
