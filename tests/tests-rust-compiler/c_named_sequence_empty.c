@@ -77,7 +77,7 @@ check_explicit_default(void) {
     asn_dec_rval_t cer = asn_decode(NULL, ATS_CER, &asn_DEF_RequiredPacket,
                                     (void **)&strict, wire, sizeof(wire));
     int failed = ber.code != RC_OK || ber.consumed != sizeof(wire) || !decoded
-        || !decoded->child || decoded->enabled || decoded->count != 0 || cer.code == RC_OK;
+        || decoded->enabled || decoded->count != 0 || cer.code == RC_OK;
     if(decoded) ASN_STRUCT_FREE(asn_DEF_RequiredPacket, decoded);
     if(strict) ASN_STRUCT_FREE(asn_DEF_RequiredPacket, strict);
     if(failed) fprintf(stderr, "C explicit DEFAULT behavior mismatch\n");
@@ -105,11 +105,11 @@ main(void) {
         0x30, 0x80, 0x30, 0x80, 0, 0, 0x01, 0x01, 0xff, 0x02, 0x01, 0x03, 0, 0,
     };
     Empty_t empty = {0};
-    RequiredOnly_t required = {.child = &empty};
+    RequiredOnly_t required = {.child = empty};
     OptionalOnly_t optional_absent = {0};
     OptionalOnly_t optional_present = {.child = &empty};
-    RequiredPacket_t defaults = {.child = &empty, .enabled = 0, .count = 0};
-    RequiredPacket_t nondefaults = {.child = &empty, .enabled = 0xff, .count = 3};
+    RequiredPacket_t defaults = {.child = empty, .enabled = 0, .count = 0};
+    RequiredPacket_t nondefaults = {.child = empty, .enabled = 0xff, .count = 3};
     int failed = 0;
     failed |= check_vector(&asn_DEF_RequiredOnly, &required, required_der,
                            sizeof(required_der), required_cer, sizeof(required_cer));

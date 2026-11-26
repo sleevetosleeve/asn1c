@@ -56,7 +56,7 @@ check_twelve_field_boundary(void) {
     };
     RemoteFive_t remote = {.one = 1, .two = 2, .three = 3, .four = 4, .five = 5};
     LocalFive_t local = {.one = 5, .two = 4, .three = 3, .four = 2, .five = 1};
-    Work12Packet_t value = {.remote = &remote, .local = &local};
+    Work12Packet_t value = {.remote = remote, .local = local};
 
     /* Mark every local SET leaf present before comparing semantic decodes. */
     ASN_SET_MKPRESENT(local._presence_map, LocalFive_PR_one);
@@ -211,9 +211,9 @@ check_cer_rejects(asn_TYPE_descriptor_t *td, const uint8_t *wire, size_t size) {
  */
 static int
 set_pair_value_matches(const SetPair_t *value) {
-    return value && value->imported && value->imported->number == 2
-        && value->imported->flag && value->local && value->local->number == 3
-        && value->local->flag;
+    return value && value->imported.number == 2
+        && value->imported.flag && value->local.number == 3
+        && value->local.flag;
 }
 
 /* Confirm BER accepts reversed parent and child SET members but CER rejects them.
@@ -283,9 +283,9 @@ check_optional_absence(void) {
     second = ber_decode(NULL, &asn_DEF_OptionalOrder, (void **)&set,
                         child_absent, sizeof(child_absent));
     failed = first.code != RC_OK || first.consumed != sizeof(leaf_absent)
-        || !sequence || !sequence->imported || sequence->imported->flag
+        || !sequence || sequence->imported.number != 2 || sequence->imported.flag
         || second.code != RC_OK || second.consumed != sizeof(child_absent) || !set
-        || set->explicitChild || !set->marker || !set->implicitChild;
+        || set->explicitChild || !set->marker || set->implicitChild.number != 2;
     release_value(&asn_DEF_SeqPair, sequence);
     release_value(&asn_DEF_OptionalOrder, set);
     return failed;
@@ -357,15 +357,15 @@ main(void) {
     LocalSet_t local_set = {.number = 3, .flag = 1};
     LocalPairSeq_t local_sequence = {.number = 3, .flag = 1};
     NonemptyRemoteSet_t remote_set = {.number = 2, .flag = 1};
-    SeqPair_t sequence_pair = {.imported = &remote, .local = &local_set};
-    SetPair_t set_pair = {.imported = &remote_set, .local = &local_sequence};
-    RepeatedPair_t repeated = {.implicitChild = &remote, .explicitChild = &remote};
-    OptionalOrder_t optional = {.marker = 1, .implicitChild = &remote};
-    OptionalOrder_t optional_present = {.marker = 1, .implicitChild = &remote};
+    SeqPair_t sequence_pair = {.imported = remote, .local = local_set};
+    SetPair_t set_pair = {.imported = remote_set, .local = local_sequence};
+    RepeatedPair_t repeated = {.implicitChild = remote, .explicitChild = remote};
+    OptionalOrder_t optional = {.marker = 1, .implicitChild = remote};
+    OptionalOrder_t optional_present = {.marker = 1, .implicitChild = remote};
     EmptyRemoteSeq_t empty_child = {0};
-    EmptyPair_t empty = {.child = &empty_child};
+    EmptyPair_t empty = {.child = empty_child};
     NonemptyRemoteSet_t nested_set = {.number = 2, .flag = 1};
-    NonemptySetPair_t set_child = {.child = &nested_set};
+    NonemptySetPair_t set_child = {.child = nested_set};
     int failed = 0;
     optional_present.explicitChild = &remote;
     ASN_SET_MKPRESENT(local_set._presence_map, LocalSet_PR_number);
