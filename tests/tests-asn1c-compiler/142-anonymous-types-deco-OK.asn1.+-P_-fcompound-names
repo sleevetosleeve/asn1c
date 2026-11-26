@@ -207,12 +207,12 @@ memb_y_constraint_5(const asn_TYPE_descriptor_t *td, const void *sptr,
 
 #ifndef ASN1C_NO_UNSUFFIXED_PDU_ALIAS
 #if defined(__ELF__) && (defined(__GNUC__) || defined(__clang__))
-extern asn_TYPE_descriptor_t asn_DEF_anonType __attribute__((weak, alias("asn_DEF_anonType_5")));
+extern asn_TYPE_descriptor_t asn_DEF_Type1__anonType __attribute__((weak, alias("asn_DEF_anonType_5")));
 #else
 static asn_TYPE_descriptor_t asn_DEF_anonType_5;
-static asn_TYPE_descriptor_t asn_DEF_anonType;
+static asn_TYPE_descriptor_t asn_DEF_Type1__anonType;
 __attribute__((constructor)) static void asn_DEF_anonType_5_alias_init(void) {
-	asn_DEF_anonType = asn_DEF_anonType_5;
+	asn_DEF_Type1__anonType = asn_DEF_anonType_5;
 }
 #endif
 #endif /* ASN1C_NO_UNSUFFIXED_PDU_ALIAS */
@@ -460,12 +460,12 @@ memb_y_constraint_9(const asn_TYPE_descriptor_t *td, const void *sptr,
 
 #ifndef ASN1C_NO_UNSUFFIXED_PDU_ALIAS
 #if defined(__ELF__) && (defined(__GNUC__) || defined(__clang__))
-extern asn_TYPE_descriptor_t asn_DEF_anonType __attribute__((weak, alias("asn_DEF_anonType_9")));
+extern asn_TYPE_descriptor_t asn_DEF_Type2__anonType __attribute__((weak, alias("asn_DEF_anonType_9")));
 #else
 static asn_TYPE_descriptor_t asn_DEF_anonType_9;
-static asn_TYPE_descriptor_t asn_DEF_anonType;
+static asn_TYPE_descriptor_t asn_DEF_Type2__anonType;
 __attribute__((constructor)) static void asn_DEF_anonType_9_alias_init(void) {
-	asn_DEF_anonType = asn_DEF_anonType_9;
+	asn_DEF_Type2__anonType = asn_DEF_anonType_9;
 }
 #endif
 #endif /* ASN1C_NO_UNSUFFIXED_PDU_ALIAS */
@@ -670,12 +670,12 @@ extern asn_TYPE_descriptor_t asn_DEF_EXTERNAL;
 
 #ifndef ASN1C_NO_UNSUFFIXED_PDU_ALIAS
 #if defined(__ELF__) && (defined(__GNUC__) || defined(__clang__))
-extern asn_TYPE_descriptor_t asn_DEF_encoding __attribute__((weak, alias("asn_DEF_encoding_27")));
+extern asn_TYPE_descriptor_t asn_DEF_EXTERNAL__encoding __attribute__((weak, alias("asn_DEF_encoding_27")));
 #else
 static asn_TYPE_descriptor_t asn_DEF_encoding_27;
-static asn_TYPE_descriptor_t asn_DEF_encoding;
+static asn_TYPE_descriptor_t asn_DEF_EXTERNAL__encoding;
 __attribute__((constructor)) static void asn_DEF_encoding_27_alias_init(void) {
-	asn_DEF_encoding = asn_DEF_encoding_27;
+	asn_DEF_EXTERNAL__encoding = asn_DEF_encoding_27;
 }
 #endif
 #endif /* ASN1C_NO_UNSUFFIXED_PDU_ALIAS */

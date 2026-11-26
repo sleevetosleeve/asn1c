@@ -53,12 +53,12 @@ extern asn_TYPE_member_t asn_MBR_SIGNED_16P1_3[1];
 
 #ifndef ASN1C_NO_UNSUFFIXED_PDU_ALIAS
 #if defined(__ELF__) && (defined(__GNUC__) || defined(__clang__))
-extern asn_TYPE_descriptor_t asn_DEF_signed __attribute__((weak, alias("asn_DEF_signed_4")));
+extern asn_TYPE_descriptor_t asn_DEF_Signed __attribute__((weak, alias("asn_DEF_signed_4")));
 #else
 static asn_TYPE_descriptor_t asn_DEF_signed_4;
-static asn_TYPE_descriptor_t asn_DEF_signed;
+static asn_TYPE_descriptor_t asn_DEF_Signed;
 __attribute__((constructor)) static void asn_DEF_signed_4_alias_init(void) {
-	asn_DEF_signed = asn_DEF_signed_4;
+	asn_DEF_Signed = asn_DEF_signed_4;
 }
 #endif
 #endif /* ASN1C_NO_UNSUFFIXED_PDU_ALIAS */

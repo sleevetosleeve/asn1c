@@ -134,12 +134,12 @@ asn1c_collection_constraint_3(const asn_TYPE_descriptor_t *td, const void *sptr,
 
 #ifndef ASN1C_NO_UNSUFFIXED_PDU_ALIAS
 #if defined(__ELF__) && (defined(__GNUC__) || defined(__clang__))
-extern asn_TYPE_descriptor_t asn_DEF_type2Bit __attribute__((weak, alias("asn_DEF_type2Bit_3")));
+extern asn_TYPE_descriptor_t asn_DEF_TestMessage__content__type2Bit __attribute__((weak, alias("asn_DEF_type2Bit_3")));
 #else
 static asn_TYPE_descriptor_t asn_DEF_type2Bit_3;
-static asn_TYPE_descriptor_t asn_DEF_type2Bit;
+static asn_TYPE_descriptor_t asn_DEF_TestMessage__content__type2Bit;
 __attribute__((constructor)) static void asn_DEF_type2Bit_3_alias_init(void) {
-	asn_DEF_type2Bit = asn_DEF_type2Bit_3;
+	asn_DEF_TestMessage__content__type2Bit = asn_DEF_type2Bit_3;
 }
 #endif
 #endif /* ASN1C_NO_UNSUFFIXED_PDU_ALIAS */
@@ -211,12 +211,12 @@ asn1c_collection_constraint_7(const asn_TYPE_descriptor_t *td, const void *sptr,
 
 #ifndef ASN1C_NO_UNSUFFIXED_PDU_ALIAS
 #if defined(__ELF__) && (defined(__GNUC__) || defined(__clang__))
-extern asn_TYPE_descriptor_t asn_DEF_type4Bit __attribute__((weak, alias("asn_DEF_type4Bit_7")));
+extern asn_TYPE_descriptor_t asn_DEF_TestMessage__content__type4Bit __attribute__((weak, alias("asn_DEF_type4Bit_7")));
 #else
 static asn_TYPE_descriptor_t asn_DEF_type4Bit_7;
-static asn_TYPE_descriptor_t asn_DEF_type4Bit;
+static asn_TYPE_descriptor_t asn_DEF_TestMessage__content__type4Bit;
 __attribute__((constructor)) static void asn_DEF_type4Bit_7_alias_init(void) {
-	asn_DEF_type4Bit = asn_DEF_type4Bit_7;
+	asn_DEF_TestMessage__content__type4Bit = asn_DEF_type4Bit_7;
 }
 #endif
 #endif /* ASN1C_NO_UNSUFFIXED_PDU_ALIAS */
@@ -274,12 +274,12 @@ memb_type4Bit_constraint_2(const asn_TYPE_descriptor_t *td, const void *sptr,
 
 #ifndef ASN1C_NO_UNSUFFIXED_PDU_ALIAS
 #if defined(__ELF__) && (defined(__GNUC__) || defined(__clang__))
-extern asn_TYPE_descriptor_t asn_DEF_content __attribute__((weak, alias("asn_DEF_content_2")));
+extern asn_TYPE_descriptor_t asn_DEF_TestMessage__content __attribute__((weak, alias("asn_DEF_content_2")));
 #else
 static asn_TYPE_descriptor_t asn_DEF_content_2;
-static asn_TYPE_descriptor_t asn_DEF_content;
+static asn_TYPE_descriptor_t asn_DEF_TestMessage__content;
 __attribute__((constructor)) static void asn_DEF_content_2_alias_init(void) {
-	asn_DEF_content = asn_DEF_content_2;
+	asn_DEF_TestMessage__content = asn_DEF_content_2;
 }
 #endif
 #endif /* ASN1C_NO_UNSUFFIXED_PDU_ALIAS */
@@ -871,12 +871,12 @@ memb_items_constraint_13(const asn_TYPE_descriptor_t *td, const void *sptr,
 
 #ifndef ASN1C_NO_UNSUFFIXED_PDU_ALIAS
 #if defined(__ELF__) && (defined(__GNUC__) || defined(__clang__))
-extern asn_TYPE_descriptor_t asn_DEF_branch1 __attribute__((weak, alias("asn_DEF_branch1_13")));
+extern asn_TYPE_descriptor_t asn_DEF_DeepNesting__nested__branch1 __attribute__((weak, alias("asn_DEF_branch1_13")));
 #else
 static asn_TYPE_descriptor_t asn_DEF_branch1_13;
-static asn_TYPE_descriptor_t asn_DEF_branch1;
+static asn_TYPE_descriptor_t asn_DEF_DeepNesting__nested__branch1;
 __attribute__((constructor)) static void asn_DEF_branch1_13_alias_init(void) {
-	asn_DEF_branch1 = asn_DEF_branch1_13;
+	asn_DEF_DeepNesting__nested__branch1 = asn_DEF_branch1_13;
 }
 #endif
 #endif /* ASN1C_NO_UNSUFFIXED_PDU_ALIAS */
@@ -949,23 +949,23 @@ memb_items_constraint_18(const asn_TYPE_descriptor_t *td, const void *sptr,
 
 #ifndef ASN1C_NO_UNSUFFIXED_PDU_ALIAS
 #if defined(__ELF__) && (defined(__GNUC__) || defined(__clang__))
-extern asn_TYPE_descriptor_t asn_DEF_branch2 __attribute__((weak, alias("asn_DEF_branch2_18")));
+extern asn_TYPE_descriptor_t asn_DEF_DeepNesting__nested__branch2 __attribute__((weak, alias("asn_DEF_branch2_18")));
 #else
 static asn_TYPE_descriptor_t asn_DEF_branch2_18;
-static asn_TYPE_descriptor_t asn_DEF_branch2;
+static asn_TYPE_descriptor_t asn_DEF_DeepNesting__nested__branch2;
 __attribute__((constructor)) static void asn_DEF_branch2_18_alias_init(void) {
-	asn_DEF_branch2 = asn_DEF_branch2_18;
+	asn_DEF_DeepNesting__nested__branch2 = asn_DEF_branch2_18;
 }
 #endif
 #endif /* ASN1C_NO_UNSUFFIXED_PDU_ALIAS */
 #ifndef ASN1C_NO_UNSUFFIXED_PDU_ALIAS
 #if defined(__ELF__) && (defined(__GNUC__) || defined(__clang__))
-extern asn_TYPE_descriptor_t asn_DEF_nested __attribute__((weak, alias("asn_DEF_nested_12")));
+extern asn_TYPE_descriptor_t asn_DEF_DeepNesting__nested __attribute__((weak, alias("asn_DEF_nested_12")));
 #else
 static asn_TYPE_descriptor_t asn_DEF_nested_12;
-static asn_TYPE_descriptor_t asn_DEF_nested;
+static asn_TYPE_descriptor_t asn_DEF_DeepNesting__nested;
 __attribute__((constructor)) static void asn_DEF_nested_12_alias_init(void) {
-	asn_DEF_nested = asn_DEF_nested_12;
+	asn_DEF_DeepNesting__nested = asn_DEF_nested_12;
 }
 #endif
 #endif /* ASN1C_NO_UNSUFFIXED_PDU_ALIAS */
@@ -1591,12 +1591,12 @@ extern asn_TYPE_descriptor_t asn_DEF_EXTERNAL;
 
 #ifndef ASN1C_NO_UNSUFFIXED_PDU_ALIAS
 #if defined(__ELF__) && (defined(__GNUC__) || defined(__clang__))
-extern asn_TYPE_descriptor_t asn_DEF_encoding __attribute__((weak, alias("asn_DEF_encoding_38")));
+extern asn_TYPE_descriptor_t asn_DEF_EXTERNAL__encoding __attribute__((weak, alias("asn_DEF_encoding_38")));
 #else
 static asn_TYPE_descriptor_t asn_DEF_encoding_38;
-static asn_TYPE_descriptor_t asn_DEF_encoding;
+static asn_TYPE_descriptor_t asn_DEF_EXTERNAL__encoding;
 __attribute__((constructor)) static void asn_DEF_encoding_38_alias_init(void) {
-	asn_DEF_encoding = asn_DEF_encoding_38;
+	asn_DEF_EXTERNAL__encoding = asn_DEF_encoding_38;
 }
 #endif
 #endif /* ASN1C_NO_UNSUFFIXED_PDU_ALIAS */
