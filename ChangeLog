@@ -1,4 +1,9 @@
 Changes since v1.5.3:
+	* Route the external decode-context arena's heap-overflow array through
+	  the allocator macros (issue #15 amendment): REALLOC/FREEMEM instead of
+	  raw realloc/free in constr_TYPE.c, so consumers that redefine the macros
+	  (e.g. to route allocations to a custom allocator) also capture the
+	  arena's overflow growth. The 8 inline frames remain allocation-free.
 	* Fix external-arena frame aliasing (issue #15): arena frames are now keyed
 	  by (structure address, type specifics) instead of the address alone, so an
 	  inline member at offset 0 (single-member SEQUENCE wrapper) no longer
