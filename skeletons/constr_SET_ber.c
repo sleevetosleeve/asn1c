@@ -767,7 +767,7 @@ _SET_ber_prepare(const asn_codec_ctx_t *codec,
         *st = *struct_ptr = CALLOC(1, (*specs)->struct_size);
         if(!*st) return -1;
     }
-    *ctx = asn_get_struct_ctx(codec, *st, (*specs)->ctx_offset);
+    *ctx = asn_get_struct_ctx(codec, *st, (*specs)->ctx_offset, *specs);
     if(!*ctx) return -1;
     return 0;
 }
@@ -968,7 +968,7 @@ SET_decode_ber(const asn_codec_ctx_t *codec, const asn_TYPE_descriptor_t *td,
         && ASN_SET_ISPRESENT2((char *)*target + specs->pres_offset, i)
         && _SET_ber_open_dependencies(td, *target)) { result.code = RC_FAIL; return result; }
     }
-    ctx = asn_get_struct_ctx(codec, *target, specs->ctx_offset);
+    ctx = asn_get_struct_ctx(codec, *target, specs->ctx_offset, specs);
     if(!ctx) { result.code = RC_FAIL; return result; }
     memset(ctx, 0, sizeof(*ctx));
     result = _SET_decode_ber_pass(codec, td, target, input, size, tag_mode, 2);

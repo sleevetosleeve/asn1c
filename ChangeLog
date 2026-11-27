@@ -1,4 +1,19 @@
 Changes since v1.5.3:
+	* Fix external-arena frame aliasing (issue #15): arena frames are now keyed
+	  by (structure address, type specifics) instead of the address alone, so an
+	  inline member at offset 0 (single-member SEQUENCE wrapper) no longer
+	  collides with its parent's frame. asn_ext_ctx_get() and
+	  asn_get_struct_ctx() take an extra type_key argument (the specifics
+	  pointer); all 21 decoder fetch sites pass their specs. Regression covered
+	  by the Wrap type in the 610 module, check-ext-ctx.c and check-ext-ctx.sh.
+	* Onboard converter-example onto the external decode context (issue #15):
+	  it now decodes through asn_decode_ctx()/uper_decode_ctx()/
+	  aper_decode_ctx() with a file-scope asn_struct_external_ctx_t arena and
+	  frees via ASN_STRUCT_FREE_CTX, so the generated converter works
+	  unchanged with both default and -fno-ctx-members code (chunked RC_WMORE
+	  input included). Covered by tests-asn1c-smoke/check-ext-ctx.sh; arena
+	  helpers unit-tested in tests-skeletons/check-ext-ctx.c. README and the
+	  asn1c man page document the feature for end users.
 	* Add per-codec external-context decode entry points (issue #15, Phases
 	  1-4): xer_decode_ctx(), jer_decode_ctx(), oer_decode_ctx(),
 	  uper_decode_ctx(), aper_decode_ctx(), cbor_decode_ctx() complement

@@ -547,7 +547,7 @@ SEQUENCE_decode_jer_flat(const asn_codec_ctx_t *codec,
         st = *struct_ptr = CALLOC(1, specs->struct_size);
         if(!st) FLAT_RETURN(RC_FAIL);
     }
-    ctx = asn_get_struct_ctx(codec, st, specs->ctx_offset);
+    ctx = asn_get_struct_ctx(codec, st, specs->ctx_offset, specs);
     if(!ctx) FLAT_RETURN(RC_FAIL);
     if(ASN__STACK_OVERFLOW_CHECK(codec)) FLAT_RETURN(RC_FAIL);
     if(ctx->step < 0 || (size_t)ctx->step > count) FLAT_RETURN(RC_FAIL);
@@ -810,7 +810,7 @@ SEQUENCE_decode_jer(const asn_codec_ctx_t *opt_codec_ctx,
     /*
      * Restore parsing context.
      */
-    ctx = asn_get_struct_ctx(opt_codec_ctx, st, specs->ctx_offset);
+    ctx = asn_get_struct_ctx(opt_codec_ctx, st, specs->ctx_offset, specs);
     if(!ctx) RETURN(RC_FAIL);
 
     /* Check recursion depth to prevent stack overflow */

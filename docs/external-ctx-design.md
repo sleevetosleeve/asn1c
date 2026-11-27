@@ -113,13 +113,19 @@ affecting generated types only.
 
 Defined in `skeletons/constr_TYPE.h` next to `asn_struct_ctx_t`:
 
-- `asn_struct_ctx_frame_t { void *st; asn_struct_ctx_t ctx; }` — one frame per
-  struct instance currently being parsed; keyed by the instance address.
+- `asn_struct_ctx_frame_t { void *st; const void *type_key; asn_struct_ctx_t ctx; }`
+  — one frame per struct instance currently being parsed; keyed by the
+  (instance address, type specifics) pair. The type key is required because an
+  inline member at offset 0 (e.g. a single-member SEQUENCE wrapper) makes the
+  child structure share the parent's base address; address-only keying aliased
+  the two frames and broke EXPLICIT-tag decoding of such wrappers (found
+  2026-11-27 via converter-example on a `SEQUENCE { x [1] EXPLICIT ... }`
+  fixture; fixed by keying on the specifics pointer, which is unique per type).
 - `asn_struct_external_ctx_t` — the arena, one per top-level decode operation:
   an inline array of 8 frames (`ASN_EXT_CTX_INLINE_FRAMES = 8`) plus an
   optional heap overflow, so the common case needs no allocation.
 - Helpers (type-agnostic, no vtable change):
-  `asn_ext_ctx_get(arena, st)` (find-or-create a zeroed frame),
+  `asn_ext_ctx_get(arena, st, type_key)` (find-or-create a zeroed frame),
   `asn_struct_external_ctx_reset(arena)` (free every frame's `ctx->ptr`
   scratch, free the heap overflow, zero the arena),
   `asn_get_struct_ctx(opt_codec_ctx, st, ctx_offset)` (dual-path fetch used by
@@ -189,9 +195,13 @@ symmetry and pass the arena through `asn_codec_ctx_t` unchanged.
    regression harness.
 2. Phase 1 — XER, JER. Phase 2 — OER. Phase 3 — UPER/APER (SET/SET-OF sites).
    Phase 4 — CBOR.
-3. `converter-example.c` / PDU-collection helpers stay on the plain entry
-   points until **all** codecs have `_ctx` versions — deliberately deferred to
-   avoid tracking partial onboarding (decision recorded 2026-11-26).
+3. `converter-example.c` (and thereby the `-pdu=...` PDU-collection mode)
+   now decodes through `asn_decode_ctx` / `uper_decode_ctx` / `aper_decode_ctx`
+   with a file-scope arena and frees via `ASN_STRUCT_FREE_CTX`, so it works
+   unchanged with both default and `-fno-ctx-members` generated code (the arena
+   takes precedence over embedded members when present). Previously deferred
+   until all codecs had `_ctx` versions (decision recorded 2026-11-26, lifted
+   2026-11-27); covered by `tests/tests-asn1c-smoke/check-ext-ctx.sh`.
 
 Each phase lands with tests in `tests/tests-c-compiler`, expected-output tests
 in `tests/tests-asn1c-compiler` for `-fno-ctx-members` (`-P` output contains
@@ -218,6 +228,16 @@ pass the existing suites.
 - 2026-11-26: converter-example/PDU helpers deferred until all decoders are
   onboarded.
 - 2026-11-26: sentinel value `(unsigned)-1` for `ctx_offset`.
+- 2026-11-27: arena frames keyed by (struct address, type specifics), not
+  address alone — inline members at offset 0 alias the parent's address
+  (regression found by check-BER-retag's `Nested` fixture through the
+  onboarded converter-example; locked by `Wrap` in the 610 module, the
+  check-ext-ctx unit test, and the check-ext-ctx smoke test).
+- 2026-11-27: `converter-example.c` onboarded onto the `_ctx` entry points
+  with a file-scope arena; the arena-wins-when-present fetch rule makes the
+  same binary correct for both codegen modes. Arena helpers unit-tested in
+  `tests/tests-skeletons/check-ext-ctx.c` (inline capacity, heap overflow,
+  reset, dual-path fetch).
 - 2026-11-26: Phases 1-4 landed as one change: `xer_decode_ctx`,
   `jer_decode_ctx`, `oer_decode_ctx`, `uper_decode_ctx`, `aper_decode_ctx`,
   `cbor_decode_ctx` all follow the `ber_decode_ctx` pattern (always stack-copy

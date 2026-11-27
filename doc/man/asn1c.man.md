@@ -184,11 +184,18 @@ cargo check --offline --manifest-path generated/Cargo.toml
 -fno-ctx-members
 :   Do not embed the `asn_struct_ctx_t _asn_ctx` member into generated
     structures; emit the `ASN_CTX_OFFSET_EXTERNAL` sentinel in the type
-    specifics instead. Decode such code through `ber_decode_ctx()` /
-    `asn_decode_ctx()`, passing a caller-owned `asn_struct_external_ctx_t`
-    arena (zero-initialized once, reused across `RC_WMORE` resumes, reset
-    with `asn_struct_external_ctx_reset()`); see `constr_TYPE.h`.
-    Plain `ber_decode()` cannot resume `-fno-ctx-members` output.
+    specifics instead. Decode such code through the `*_decode_ctx()`
+    entry points (`ber_decode_ctx()`, `xer_decode_ctx()`, `jer_decode_ctx()`,
+    `oer_decode_ctx()`, `uper_decode_ctx()`, `aper_decode_ctx()`,
+    `cbor_decode_ctx()`, or the generic `asn_decode_ctx()` dispatcher),
+    passing a caller-owned `asn_struct_external_ctx_t` arena
+    (zero-initialized once, reused across `RC_WMORE` resumes, reset
+    with `asn_struct_external_ctx_reset()` or `ASN_STRUCT_FREE_CTX` /
+    `ASN_STRUCT_RESET_CTX`); see `constr_TYPE.h`. The generated
+    `converter-example` already uses these entry points and works in both
+    modes. Plain `ber_decode()` & co. cannot resume `-fno-ctx-members`
+    output for the resumable codecs (BER/CER, XER, JER, OER) and fail with
+    `RC_FAIL`; UPER/APER/CBOR plain entry points are unaffected.
     Design: `docs/external-ctx-design.md` (issue #15).
 
 -fprefer-import-source

@@ -753,7 +753,7 @@ SET_oer_prepare_decode(const asn_codec_ctx_t *codec,
         if(!st) return -1;
     }
     if(SET_oer_members_valid(td, st)) return -1;
-    ctx = asn_get_struct_ctx(codec, st, specs->ctx_offset);
+    ctx = asn_get_struct_ctx(codec, st, specs->ctx_offset, specs);
     if(!ctx) return -1;
     if(ctx->phase == SET_OER_PHASE_COMPLETE) return -1;
     if(ctx->phase != 0 && ctx->phase != SET_OER_PHASE_INITIAL

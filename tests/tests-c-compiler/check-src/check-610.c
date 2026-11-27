@@ -13,6 +13,7 @@
 #include <assert.h>
 
 #include <NetMsg.h>
+#include <Wrap.h>
 #include <asn_application.h>
 #include <der_encoder.h>
 #include <ber_decoder.h>
@@ -135,6 +136,26 @@ main(int ac, char **av) {
 			if(rc) return 1;
 			if(m) ASN_STRUCT_FREE(asn_DEF_NetMsg, m);
 		}
+	}
+
+	/* Aliasing regression in default mode too: Wrap.only is inline at
+	   offset 0 and shares the parent's base address. */
+	{
+		uint8_t wbuf[64];
+		Wrap_t wsrc;
+		memset(&wsrc, 0, sizeof(wsrc));
+		wsrc.only.v = 99;
+		asn_enc_rval_t wer = der_encode_to_buffer(&asn_DEF_Wrap, &wsrc,
+			wbuf, sizeof(wbuf));
+		if(wer.encoded == (ssize_t)-1) { printf("WRAP ENCODE FAIL\n"); return 1; }
+		Wrap_t *w = NULL;
+		asn_dec_rval_t dr = ber_decode(0, &asn_DEF_Wrap, (void **)&w,
+			wbuf, (size_t)wer.encoded);
+		rc = (dr.code == RC_OK && w && w->only.v == 99) ? 0 : -1;
+		printf("wrap ber_decode full: %s (code=%d rc=%d)\n",
+			rc == 0 ? "PASS" : "FAIL", dr.code, rc);
+		if(rc) return 1;
+		if(w) ASN_STRUCT_FREE(asn_DEF_Wrap, w);
 	}
 
 	printf("ALL PASS\n");

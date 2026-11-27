@@ -516,7 +516,7 @@ _SET_xer_prepare(const asn_codec_ctx_t *codec,
         *st = *struct_ptr = CALLOC(1, (*specs)->struct_size);
         if(!*st) return -1;
     }
-    *ctx = asn_get_struct_ctx(codec, *st, (*specs)->ctx_offset);
+    *ctx = asn_get_struct_ctx(codec, *st, (*specs)->ctx_offset, *specs);
     if(!*ctx) return -1;
     return 0;
 }

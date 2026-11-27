@@ -358,7 +358,7 @@ _sequence_decode_group_ber(const asn_codec_ctx_t *codec_ctx,
 		st = *struct_ptr = CALLOC(1, specs->struct_size);
 		if(st == 0) GROUP_RETURN(RC_FAIL);
 	}
-	ctx = asn_get_struct_ctx(codec_ctx, st, specs->ctx_offset);
+	ctx = asn_get_struct_ctx(codec_ctx, st, specs->ctx_offset, specs);
 	if(!ctx) GROUP_RETURN(RC_FAIL);
 	if(ASN__STACK_OVERFLOW_CHECK(codec_ctx)) GROUP_RETURN(RC_FAIL);
 	if(ctx->phase == 0) {
@@ -449,7 +449,7 @@ SEQUENCE_decode_ber(const asn_codec_ctx_t *opt_codec_ctx,
     /*
      * Restore parsing context.
      */
-    ctx = asn_get_struct_ctx(opt_codec_ctx, st, specs->ctx_offset);
+    ctx = asn_get_struct_ctx(opt_codec_ctx, st, specs->ctx_offset, specs);
     if(!ctx) RETURN(RC_FAIL);
 
 	/*

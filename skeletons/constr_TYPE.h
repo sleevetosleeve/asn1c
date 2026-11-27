@@ -53,6 +53,10 @@ typedef struct asn_struct_ctx_s {
  */
 typedef struct asn_struct_ctx_frame_s {
 	void *st;		/* Structure instance this frame belongs to */
+	const void *type_key;	/* Owning type specifics: distinguishes nested
+				   inline members that share the same base address
+				   (e.g. a single-member SEQUENCE wrapper), which a
+				   purely address-keyed arena could not tell apart */
 	asn_struct_ctx_t ctx;	/* Its parsing context */
 } asn_struct_ctx_frame_t;
 
@@ -65,8 +69,9 @@ typedef struct asn_struct_external_ctx_s {
 	size_t heap_capacity;
 } asn_struct_external_ctx_t;
 
-/* Find or create (zeroed) the frame for st. Returns 0 on failure. */
-asn_struct_ctx_t *asn_ext_ctx_get(asn_struct_external_ctx_t *ext, void *st);
+/* Find or create (zeroed) the frame for (st, type_key). Returns 0 on failure. */
+asn_struct_ctx_t *asn_ext_ctx_get(asn_struct_external_ctx_t *ext, void *st,
+                                  const void *type_key);
 /*
  * Release every frame's decoder scratch (ctx->ptr), free the heap overflow
  * and zero the whole arena. Call before a fresh decode into the same
@@ -79,10 +84,13 @@ struct asn_codec_ctx_s;	/* Forward declaration */
 /*
  * Fetch the parsing context of structure st: from the external arena when the
  * codec context carries one, otherwise from the embedded member at ctx_offset.
- * Returns 0 when ctx_offset is ASN_CTX_OFFSET_EXTERNAL but no arena is set.
+ * type_key (the type specifics pointer) discriminates arena frames of nested
+ * structures sharing the same address. Returns 0 when ctx_offset is
+ * ASN_CTX_OFFSET_EXTERNAL but no arena is set.
  */
 asn_struct_ctx_t *asn_get_struct_ctx(const struct asn_codec_ctx_s *opt_codec_ctx,
-                                     void *st, unsigned ctx_offset);
+                                     void *st, unsigned ctx_offset,
+                                     const void *type_key);
 
 /* True when ctx_offset is a usable embedded offset or the external sentinel. */
 static inline int asn_ctx_offset_valid(unsigned struct_size, unsigned ctx_offset) {
