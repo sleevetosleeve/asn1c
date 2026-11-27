@@ -1,0 +1,9 @@
+Shapes DEFINITIONS ::= BEGIN
+
+Leaf ::= SEQUENCE { value INTEGER }
+
+Node ::= SEQUENCE { value INTEGER, next Node }
+
+Tree ::= SEQUENCE { root Leaf, label IA5String }
+
+END

@@ -1,0 +1,8 @@
+RealRepro DEFINITIONS ::= BEGIN
+
+Vec3 ::= SEQUENCE {
+    x   REAL (WITH COMPONENTS { mantissa (-16777215..16777215), base (2), exponent (-149..104) }),
+    y   REAL (WITH COMPONENTS { mantissa (-16777215..16777215), base (2), exponent (-149..104) })
+}
+
+END

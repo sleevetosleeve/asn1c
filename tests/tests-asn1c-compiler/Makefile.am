@@ -9,6 +9,9 @@ dist_check_SCRIPTS += check-issue-592.sh
 dist_check_SCRIPTS += check-standard-module-order.sh
 dist_check_SCRIPTS += check-reversed-ranges.sh
 dist_check_SCRIPTS += check-boundary-ranges.sh
+dist_check_SCRIPTS += check-issue-3-by-value-members.sh
+dist_check_SCRIPTS += check-issue-5-float-real-members.sh
+dist_check_SCRIPTS += check-issue-11-12-member-descriptors.sh
 TESTS_ENVIRONMENT= top_srcdir=${top_srcdir} top_builddir=${top_builddir} \
 	CC="$(CC)"
 TESTS = $(dist_check_SCRIPTS)
@@ -26,7 +29,9 @@ check-pdu-deps-primitive-helpers.sh.log \
 check-issue-586.sh.log check-no-applicable-constraints.sh.log \
 check-xer-text-bitstring.sh.log check-issue-592.sh.log \
 check-standard-module-order.sh.log check-reversed-ranges.sh.log \
-check-boundary-ranges.sh.log: $(ASN1C)
+check-boundary-ranges.sh.log check-issue-3-by-value-members.sh.log \
+check-issue-5-float-real-members.sh.log \
+check-issue-11-12-member-descriptors.sh.log: $(ASN1C)
 
 EXTRA_DIST = README $(srcdir)/*asn1* $(srcdir)/exit-status/*.asn1 \
     $(srcdir)/issue-586/OpenV1.asn1 \
@@ -35,4 +40,8 @@ EXTRA_DIST = README $(srcdir)/*asn1* $(srcdir)/exit-status/*.asn1 \
     $(srcdir)/no-applicable-constraints/check-no-applicable-constraints.c \
     $(srcdir)/214-xer-text-bitstring-OK.asn1 \
     $(srcdir)/check-xer-text-bitstring.c \
-    $(srcdir)/issue-592/StructTags.asn1
+    $(srcdir)/issue-592/StructTags.asn1 \
+    $(srcdir)/issue-3/shapes.asn1 \
+    $(srcdir)/issue-3/check-by-value-members.c \
+    $(srcdir)/issue-5/real-repro.asn1 \
+    $(srcdir)/issue-5/check-float-real-members.c
