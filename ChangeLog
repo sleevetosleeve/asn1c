@@ -46,6 +46,25 @@ Changes since v1.5.3:
 	* Define HAVE_TM_GMTOFF on Android (bionic) in the GeneralizedTime.c
 	  skeleton, so GMTOFF(tm) uses tm_gmtoff instead of the non-existent
 	  _timezone and the thread-safety #warning no longer fires (issue #8).
+	* Generate large C BER tag constants with unsigned shifts. Reject tag
+	  numbers outside the C runtime's packed tag range before writing output,
+	  and reserve the all-ones member tag for unknown tags.
+	* Report tag-resolution debug traces, warnings, and errors through the
+	  active logger (issue #622 reported and PR #623 submitted by Javier /
+	  @mr-j0nes). Distinguish unknown external tags from resolved tags.
+	  Warn when the fixer cannot verify tag uniqueness and require a known
+	  outer tag for SEQUENCE, SET, and CHOICE components.
+	  Let OF collections use the external element descriptor and reject
+	  external type aliases whose descriptors the compiler cannot generate.
+	* Type-check fixer diagnostics through both logging callbacks on GCC and
+	  Clang (PR #621 by Javier / @mr-j0nes). Correct format arguments and
+	  guard missing diagnostic names. Test the named INTEGER error and
+	  require both compilers to reject mismatched callback arguments.
+	* Release partially built ASN.1 modules after a rejected parse (PR #620 by
+	  Javier / @mr-j0nes). Transfer ownership to the parse tree at END, unwind
+	  grammar-level rejections, and release scanner buffers in both entry
+	  points. Test repeated failures, mixed file and buffer parsing, and
+	  successful multi-module ownership transfer.
 	* Normalize trailing zero bits when encoding fixed-size BIT STRING types
 	  with a NamedBitList to JER (issue #617, PR #618 by Javier / @mr-j0nes).
 	  Require the exact width for unnamed types and reject any set bit beyond
