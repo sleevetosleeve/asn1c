@@ -1,4 +1,14 @@
 Changes since v1.5.3:
+	* Add per-codec external-context decode entry points (issue #15, Phases
+	  1-4): xer_decode_ctx(), jer_decode_ctx(), oer_decode_ctx(),
+	  uper_decode_ctx(), aper_decode_ctx(), cbor_decode_ctx() complement
+	  ber_decode_ctx()/asn_decode_ctx(); all stack-copy the codec context and
+	  carry the caller-owned asn_struct_external_ctx_t arena in
+	  asn_codec_ctx_t.ext_struct_ctx. Decoder headers take the arena as
+	  struct asn_struct_external_ctx_s *. Plain entry points of the
+	  resumable codecs (BER/CER, XER, JER, OER) fail with RC_FAIL on
+	  -fno-ctx-members output; PER/CBOR plain entry points are unaffected
+	  (they never fetch the embedded context at decode time).
 	* Add -fno-ctx-members (issue #15, Phase 0 BER/CER): generated constructed
 	  structs omit the asn_struct_ctx_t _asn_ctx member and carry the
 	  ASN_CTX_OFFSET_EXTERNAL sentinel in their specifics. New entry points

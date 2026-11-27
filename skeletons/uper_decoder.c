@@ -119,9 +119,11 @@ uper_decode_canonical_lenient(const asn_codec_ctx_t *opt_codec_ctx,
     return uper_decode(&canonical_ctx, td, sptr, buffer, size, skip_bits, unused_bits);
 }
 
-asn_dec_rval_t
-uper_decode(const asn_codec_ctx_t *opt_codec_ctx,
-            const asn_TYPE_descriptor_t *td, void **sptr, const void *buffer,
+static asn_dec_rval_t
+uper_decode_impl(const asn_codec_ctx_t *opt_codec_ctx,
+            const asn_TYPE_descriptor_t *td, void **sptr,
+            asn_struct_external_ctx_t *ext_ctx,
+            const void *buffer,
             size_t size, int skip_bits, int unused_bits) {
     asn_codec_ctx_t s_codec_ctx;
 	asn_dec_rval_t rval;
@@ -140,7 +142,7 @@ uper_decode(const asn_codec_ctx_t *opt_codec_ctx,
 	 * must be allocated on the stack.
 	 */
 	if(opt_codec_ctx) {
-		if(opt_codec_ctx->max_stack_size) {
+		if(opt_codec_ctx->max_stack_size || ext_ctx) {
 			s_codec_ctx = *opt_codec_ctx;
 			opt_codec_ctx = &s_codec_ctx;
 		}
@@ -150,6 +152,8 @@ uper_decode(const asn_codec_ctx_t *opt_codec_ctx,
 		s_codec_ctx.max_stack_size = ASN__DEFAULT_STACK_MAX;
 		opt_codec_ctx = &s_codec_ctx;
 	}
+	if(ext_ctx)
+		s_codec_ctx.ext_struct_ctx = ext_ctx;
 
 	/* Fill in the position indicator */
 	memset(&pd, 0, sizeof(pd));
@@ -182,4 +186,27 @@ uper_decode(const asn_codec_ctx_t *opt_codec_ctx,
 			(long)(rval.consumed & 7));
 	}
 	return ASN__STRICT_DECODE_RESULT(td, sptr, ATS_UNALIGNED_BASIC_PER, rval);
+}
+
+asn_dec_rval_t
+uper_decode(const asn_codec_ctx_t *opt_codec_ctx,
+            const asn_TYPE_descriptor_t *td, void **sptr, const void *buffer,
+            size_t size, int skip_bits, int unused_bits) {
+    return uper_decode_impl(opt_codec_ctx, td, sptr, NULL,
+            buffer, size, skip_bits, unused_bits);
+}
+
+/*
+ * uper_decode() variant carrying an external parsing-context arena
+ * (code generated with -fno-ctx-members). See uper_decoder.h.
+ * WARNING: Like uper_decode(), this call returns the number of BITS read.
+ */
+asn_dec_rval_t
+uper_decode_ctx(const asn_codec_ctx_t *opt_codec_ctx,
+            const asn_TYPE_descriptor_t *td, void **sptr,
+            asn_struct_external_ctx_t *ext_ctx,
+            const void *buffer,
+            size_t size, int skip_bits, int unused_bits) {
+    return uper_decode_impl(opt_codec_ctx, td, sptr, ext_ctx,
+            buffer, size, skip_bits, unused_bits);
 }

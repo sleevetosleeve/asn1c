@@ -43,6 +43,37 @@ jer_decode(const asn_codec_ctx_t *opt_codec_ctx,
         td->op->jer_decoder(opt_codec_ctx, td, 0, struct_ptr, buffer, size));
 }
 
+/*
+ * jer_decode() variant carrying an external parsing-context arena
+ * (code generated with -fno-ctx-members). See jer_decoder.h.
+ */
+asn_dec_rval_t
+jer_decode_ctx(const asn_codec_ctx_t *opt_codec_ctx,
+           const asn_TYPE_descriptor_t *td, void **struct_ptr,
+           asn_struct_external_ctx_t *ext_ctx,
+           const void *buffer, size_t size) {
+    asn_codec_ctx_t s_codec_ctx;
+
+    if(!td || !td->op || !td->op->jer_decoder || !struct_ptr
+       || (size && !buffer)) ASN__DECODE_FAILED;
+
+    /*
+     * Stack checker requires that the codec context
+     * must be allocated on the stack.
+     */
+    if(opt_codec_ctx) {
+        s_codec_ctx = *opt_codec_ctx;
+    } else {
+        /* If context is not given, be security-conscious anyway */
+        memset(&s_codec_ctx, 0, sizeof(s_codec_ctx));
+        s_codec_ctx.max_stack_size = ASN__DEFAULT_STACK_MAX;
+    }
+    s_codec_ctx.ext_struct_ctx = ext_ctx;
+
+    return ASN__STRICT_DECODE_RESULT(td, struct_ptr, ATS_JER,
+        td->op->jer_decoder(&s_codec_ctx, td, 0, struct_ptr, buffer, size));
+}
+
 
 
 struct jer__cb_arg {
