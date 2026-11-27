@@ -19,19 +19,23 @@ int get_asn1c_environment_version(void) { return ASN1C_ENVIRONMENT_VERSION; }
  * decode operation; frames are keyed by the structure instance address so
  * that RC_WMORE resumes find the same frame again.
  */
-asn_struct_ctx_t *asn_ext_ctx_get(asn_struct_external_ctx_t *ext, void *st) {
+asn_struct_ctx_t *asn_ext_ctx_get(asn_struct_external_ctx_t *ext, void *st,
+                                  const void *type_key) {
 	size_t i;
 	if(!ext || !st) return 0;
 	for(i = 0; i < ext->frames_used && i < ASN_EXT_CTX_INLINE_FRAMES; i++)
-		if(ext->inline_frames[i].st == st)
+		if(ext->inline_frames[i].st == st
+		   && ext->inline_frames[i].type_key == type_key)
 			return &ext->inline_frames[i].ctx;
 	if(ext->frames_used > ASN_EXT_CTX_INLINE_FRAMES)
 		for(i = ASN_EXT_CTX_INLINE_FRAMES; i < ext->frames_used; i++)
-			if(ext->heap_frames[i - ASN_EXT_CTX_INLINE_FRAMES].st == st)
+			if(ext->heap_frames[i - ASN_EXT_CTX_INLINE_FRAMES].st == st
+			   && ext->heap_frames[i - ASN_EXT_CTX_INLINE_FRAMES].type_key == type_key)
 				return &ext->heap_frames[i - ASN_EXT_CTX_INLINE_FRAMES].ctx;
 	if(ext->frames_used < ASN_EXT_CTX_INLINE_FRAMES) {
 		asn_struct_ctx_frame_t *f = &ext->inline_frames[ext->frames_used++];
 		f->st = st;
+		f->type_key = type_key;
 		memset(&f->ctx, 0, sizeof(f->ctx));
 		return &f->ctx;
 	}
@@ -48,6 +52,7 @@ asn_struct_ctx_t *asn_ext_ctx_get(asn_struct_external_ctx_t *ext, void *st) {
 			&ext->heap_frames[ext->frames_used - ASN_EXT_CTX_INLINE_FRAMES];
 		ext->frames_used++;
 		f->st = st;
+		f->type_key = type_key;
 		memset(&f->ctx, 0, sizeof(f->ctx));
 		return &f->ctx;
 	}
@@ -67,10 +72,12 @@ void asn_struct_external_ctx_reset(asn_struct_external_ctx_t *ext) {
 }
 
 asn_struct_ctx_t *asn_get_struct_ctx(const asn_codec_ctx_t *opt_codec_ctx,
-                                     void *st, unsigned ctx_offset) {
+                                     void *st, unsigned ctx_offset,
+                                     const void *type_key) {
 	if(opt_codec_ctx && opt_codec_ctx->ext_struct_ctx)
 		return asn_ext_ctx_get(
-			(asn_struct_external_ctx_t *)opt_codec_ctx->ext_struct_ctx, st);
+			(asn_struct_external_ctx_t *)opt_codec_ctx->ext_struct_ctx,
+			st, type_key);
 	if(!st || ctx_offset == ASN_CTX_OFFSET_EXTERNAL) return 0;
 	return (asn_struct_ctx_t *)((char *)st + ctx_offset);
 }

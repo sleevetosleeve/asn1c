@@ -46,6 +46,7 @@ check_PROGRAMS =                \
     check-OER-OPEN-TYPE         \
     check-OER-INTEGER           \
     check-OER-NativeEnumerated  \
+    check-ext-ctx               \
     check-APER-support          \
     check-APER-SET              \
     check-APER-OCTET_STRING     \

@@ -40,6 +40,7 @@ TESTS += check-PER-single-flavor.sh
 TESTS += check-JER-multi-pdu.sh
 TESTS += check-issue-617.sh
 TESTS += check-BER-retag.sh
+TESTS += check-ext-ctx.sh
 TESTS += check-issue-588.sh
 TESTS += check-issue-587.sh
 TESTS += check-issue-607.sh

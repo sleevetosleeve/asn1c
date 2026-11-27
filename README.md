@@ -432,6 +432,42 @@ the error occurred:
 
 For more details, see [PARTIAL_DECODING.md](PARTIAL_DECODING.md).
 
+## External decode context (`-fno-ctx-members`)
+
+By default, every generated constructed type embeds a mutable parser-state
+member (`asn_struct_ctx_t _asn_ctx;`), which adds 24 bytes per nesting level to
+each structure. For memory-constrained targets, `asn1c -fno-ctx-members`
+omits that member from the generated structures (the type specifics carry an
+`ASN_CTX_OFFSET_EXTERNAL` sentinel instead), shrinking e.g. a typical message
+struct from 104 to 32 bytes.
+
+Parsing state then lives in a caller-owned arena instead:
+
+```c
+asn_struct_external_ctx_t ext_ctx = {0};   /* zero-initialize once */
+NetMsg_t *msg = NULL;
+asn_dec_rval_t dr = ber_decode_ctx(0, &asn_DEF_NetMsg, (void **)&msg,
+                                   &ext_ctx, data, size);
+```
+
+Reuse the same arena across `RC_WMORE` resumes (chunked input), and call
+`asn_struct_external_ctx_reset(&ext_ctx)` (or `ASN_STRUCT_RESET_CTX` /
+`ASN_STRUCT_FREE_CTX`) before decoding fresh data into the same structures.
+Every codec has a sibling entry point carrying the arena:
+`ber_decode_ctx`, `xer_decode_ctx`, `jer_decode_ctx`, `oer_decode_ctx`,
+`uper_decode_ctx`, `aper_decode_ctx`, `cbor_decode_ctx`, and the generic
+`asn_decode_ctx` dispatcher. The arena is type-agnostic (8 inline frames plus
+heap overflow), so one arena serves all types of a decode operation.
+
+The generated `converter-example` works unchanged in both modes. Note that
+plain entry points (`ber_decode()` etc.) cannot resume `-fno-ctx-members`
+output for the resumable codecs (BER/CER, XER, JER, OER) and fail with
+`RC_FAIL`; use the `_ctx` variants with `-fno-ctx-members` code.
+
+For the design and rationale, see
+[docs/external-ctx-design.md](docs/external-ctx-design.md) and the
+`-fno-ctx-members` entry in the [asn1c man page](doc/man/asn1c.man.md).
+
 --
 Mouse and Lev Walkin
 <!-- markdownlint-disable MD033 -->

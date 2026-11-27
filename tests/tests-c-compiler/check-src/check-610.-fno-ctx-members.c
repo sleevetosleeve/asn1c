@@ -18,6 +18,7 @@
 #include <assert.h>
 
 #include <NetMsg.h>
+#include <Wrap.h>
 #include <asn_application.h>
 #include <der_encoder.h>
 #include <ber_decoder.h>
@@ -29,19 +30,23 @@
 #include <cbor_decoder.h>
 
 typedef asn_dec_rval_t (*decode_ctx_fn)(asn_struct_external_ctx_t *ext,
-		NetMsg_t **msg, const uint8_t *buf, size_t n);
+		void **msg, const uint8_t *buf, size_t n);
 
 static asn_dec_rval_t
-fn_ber(asn_struct_external_ctx_t *ext, NetMsg_t **msg, const uint8_t *buf, size_t n) {
-	return ber_decode_ctx(0, &asn_DEF_NetMsg, (void **)msg, ext, buf, n);
+fn_ber(asn_struct_external_ctx_t *ext, void **msg, const uint8_t *buf, size_t n) {
+	return ber_decode_ctx(0, &asn_DEF_NetMsg, msg, ext, buf, n);
 }
 static asn_dec_rval_t
-fn_xer(asn_struct_external_ctx_t *ext, NetMsg_t **msg, const uint8_t *buf, size_t n) {
-	return xer_decode_ctx(0, &asn_DEF_NetMsg, (void **)msg, ext, buf, n);
+fn_ber_wrap(asn_struct_external_ctx_t *ext, void **msg, const uint8_t *buf, size_t n) {
+	return ber_decode_ctx(0, &asn_DEF_Wrap, msg, ext, buf, n);
 }
 static asn_dec_rval_t
-fn_jer(asn_struct_external_ctx_t *ext, NetMsg_t **msg, const uint8_t *buf, size_t n) {
-	return jer_decode_ctx(0, &asn_DEF_NetMsg, (void **)msg, ext, buf, n);
+fn_xer(asn_struct_external_ctx_t *ext, void **msg, const uint8_t *buf, size_t n) {
+	return xer_decode_ctx(0, &asn_DEF_NetMsg, msg, ext, buf, n);
+}
+static asn_dec_rval_t
+fn_jer(asn_struct_external_ctx_t *ext, void **msg, const uint8_t *buf, size_t n) {
+	return jer_decode_ctx(0, &asn_DEF_NetMsg, msg, ext, buf, n);
 }
 
 static uint8_t enc_buf[2048];
@@ -66,8 +71,8 @@ encode_with(enum asn_transfer_syntax ats, const NetMsg_t *m) {
 static int
 decode_chunked(decode_ctx_fn fn, asn_struct_external_ctx_t *ext,
 		const uint8_t *buf, size_t len, size_t chunk, int allow_trailing,
-		NetMsg_t **out) {
-	NetMsg_t *msg = NULL;
+		void **out) {
+	void *msg = NULL;
 	uint8_t pend[2048];
 	size_t plen = 0, off = 0;
 	for(;;) {
@@ -140,20 +145,20 @@ main(int ac, char **av) {
 
 	/* Full-buffer decode through the external arena. */
 	memset(&ext, 0, sizeof(ext));
-	rc = fn_ber(&ext, &dec, buf, er.encoded).code == RC_OK ? 0 : -1;
+	rc = fn_ber(&ext, (void **)&dec, buf, er.encoded).code == RC_OK ? 0 : -1;
 	if(rc == 0) rc = check(dec);
 	printf("full-buffer ber_decode_ctx: %s (rc=%d)\n", rc == 0 ? "PASS" : "FAIL", rc);
 	if(rc) return 1;
 	ASN_STRUCT_FREE_CTX(asn_DEF_NetMsg, dec, &ext);	/* also resets the arena */
 	dec = NULL;
-	rc = decode_chunked(fn_ber, &ext, buf, er.encoded, 1, 0, &dec);
+	rc = decode_chunked(fn_ber, &ext, buf, er.encoded, 1, 0, (void **)&dec);
 	if(rc == 0) rc = check(dec);
 	printf("chunked(1B) ber_decode_ctx: %s (rc=%d)\n", rc == 0 ? "PASS" : "FAIL", rc);
 	if(rc) return 1;
 
 	ASN_STRUCT_FREE_CTX(asn_DEF_NetMsg, dec, &ext);
 	dec = NULL;
-	rc = decode_chunked(fn_ber, &ext, buf, er.encoded, 3, 0, &dec);
+	rc = decode_chunked(fn_ber, &ext, buf, er.encoded, 3, 0, (void **)&dec);
 	if(rc == 0) rc = check(dec);
 	printf("chunked(3B) ber_decode_ctx: %s (rc=%d)\n", rc == 0 ? "PASS" : "FAIL", rc);
 	if(rc) return 1;
@@ -204,7 +209,7 @@ main(int ac, char **av) {
 		if(rc) return 1;
 		if(m) ASN_STRUCT_FREE_CTX(asn_DEF_NetMsg, m, &ext);
 		m = NULL;
-		rc = decode_chunked(fn_xer, &ext, enc_buf, (size_t)n, 1, 1, &m);
+		rc = decode_chunked(fn_xer, &ext, enc_buf, (size_t)n, 1, 1, (void **)&m);
 		if(rc == 0) rc = check(m);
 		printf("chunked(1B) xer_decode_ctx: %s (rc=%d)\n", rc == 0 ? "PASS" : "FAIL", rc);
 		if(rc) return 1;
@@ -227,7 +232,7 @@ main(int ac, char **av) {
 		if(rc) return 1;
 		if(m) ASN_STRUCT_FREE_CTX(asn_DEF_NetMsg, m, &ext);
 		m = NULL;
-		rc = decode_chunked(fn_jer, &ext, enc_buf, (size_t)n, 1, 1, &m);
+		rc = decode_chunked(fn_jer, &ext, enc_buf, (size_t)n, 1, 1, (void **)&m);
 		if(rc == 0) rc = check(m);
 		printf("chunked(1B) jer_decode_ctx: %s (rc=%d)\n", rc == 0 ? "PASS" : "FAIL", rc);
 		if(rc) return 1;
@@ -290,6 +295,36 @@ main(int ac, char **av) {
 		printf("cbor_decode_ctx full: %s (code=%d rc=%d)\n", rc == 0 ? "PASS" : "FAIL", dr.code, rc);
 		if(rc) return 1;
 		if(m) ASN_STRUCT_FREE_CTX(asn_DEF_NetMsg, m, &ext);
+	}
+
+	/* Aliasing regression: Wrap.only is inline at offset 0, so the child
+	   structure shares the parent's base address; arena frames are keyed by
+	   (struct address, type specifics), not address alone. */
+	{
+		uint8_t wbuf[64];
+		Wrap_t wsrc;
+		memset(&wsrc, 0, sizeof(wsrc));
+		wsrc.only.v = 99;
+		asn_enc_rval_t wer = der_encode_to_buffer(&asn_DEF_Wrap, &wsrc,
+			wbuf, sizeof(wbuf));
+		if(wer.encoded == (ssize_t)-1) { printf("WRAP ENCODE FAIL\n"); return 1; }
+		memset(&ext, 0, sizeof(ext));
+		Wrap_t *w = NULL;
+		asn_dec_rval_t dr = ber_decode_ctx(0, &asn_DEF_Wrap, (void **)&w,
+			&ext, wbuf, (size_t)wer.encoded);
+		rc = (dr.code == RC_OK && w && w->only.v == 99) ? 0 : -1;
+		printf("wrap ber_decode_ctx full: %s (code=%d rc=%d)\n",
+			rc == 0 ? "PASS" : "FAIL", dr.code, rc);
+		if(rc) return 1;
+		if(w) ASN_STRUCT_FREE_CTX(asn_DEF_Wrap, w, &ext);
+		w = NULL;
+		rc = decode_chunked(fn_ber_wrap, &ext, wbuf, (size_t)wer.encoded, 1, 0,
+			(void **)&w);
+		if(rc == 0) rc = (w && ((Wrap_t *)w)->only.v == 99) ? 0 : -1;
+		printf("wrap chunked(1B) ber_decode_ctx: %s (rc=%d)\n",
+			rc == 0 ? "PASS" : "FAIL", rc);
+		if(rc) return 1;
+		if(w) ASN_STRUCT_FREE_CTX(asn_DEF_Wrap, w, &ext);
 	}
 
 	printf("ALL PASS\n");

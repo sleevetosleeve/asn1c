@@ -1079,7 +1079,7 @@ OCTET_STRING_decode_ber(const asn_codec_ctx_t *opt_codec_ctx,
         state.st = (BIT_STRING_t *)(*sptr = CALLOC(1, specs->struct_size));
         if(!state.st) return octet_string_ber_result(&state, RC_FAIL);
     }
-    state.ctx = asn_get_struct_ctx(opt_codec_ctx, state.st, specs->ctx_offset);
+    state.ctx = asn_get_struct_ctx(opt_codec_ctx, state.st, specs->ctx_offset, specs);
     if(!state.ctx) return octet_string_ber_result(&state, RC_FAIL);
     return octet_string_ber_run(&state, opt_codec_ctx);
 }

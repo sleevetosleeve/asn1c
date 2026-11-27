@@ -17,4 +17,8 @@ NetMsg ::= SEQUENCE {
     }
 }
 
+-- Aliasing regression for the external arena: the single inline member
+-- sits at offset 0, so the child structure shares the parent's base address.
+Wrap ::= SEQUENCE { only SEQUENCE { v INTEGER } }
+
 END

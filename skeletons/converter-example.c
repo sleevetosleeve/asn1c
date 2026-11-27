@@ -63,6 +63,15 @@ static int opt_nopad;   /* -per-nopad (PER input is not padded between msgs) */
 static int opt_onepdu;  /* -1 (decode single PDU) */
 static int opt_partial; /* -P (print partial decoding results on failure) */
 
+/*
+ * External decode-context arena used for all decoding in this converter, so
+ * it works with code generated both with and without -fno-ctx-members (the
+ * arena takes precedence over embedded _asn_ctx members when present).
+ * Zero-initialized once; every ASN_STRUCT_FREE_CTX / ASN_STRUCT_RESET_CTX
+ * below resets it after releasing the structure.
+ */
+static asn_struct_external_ctx_t ext_decode_ctx;
+
 #ifdef    JUNKTEST        /* Enable -J <probability> */
 #define JUNKOPT "J:"
 static double opt_jprob;    /* Junk bit probability */
@@ -570,7 +579,7 @@ main(int ac, char *av[]) {
                       ats_simple_name(osyntax));
             }
 
-            ASN_STRUCT_FREE(*pduType, structure);
+            ASN_STRUCT_FREE_CTX(*pduType, structure, &ext_decode_ctx);
         }
 
         if(file && file != stdin) {
@@ -823,7 +832,8 @@ decode_input_buffer(enum asn_transfer_syntax isyntax,
 #if !defined(ASN_DISABLE_UPER_SUPPORT)
         case ATS_UNALIGNED_BASIC_PER:
         case ATS_UNALIGNED_CANONICAL_PER:
-            rval = uper_decode(codec_ctx, pduType, structure, input,
+            rval = uper_decode_ctx(codec_ctx, pduType, structure,
+                               &ext_decode_ctx, input,
                                input_size, DynamicBuffer.skip_bits, 0);
             *extra_bits = (DynamicBuffer.skip_bits + rval.consumed) % 8;
             rval.consumed = (DynamicBuffer.skip_bits + rval.consumed) >> 3;
@@ -832,7 +842,8 @@ decode_input_buffer(enum asn_transfer_syntax isyntax,
 #if !defined(ASN_DISABLE_APER_SUPPORT)
         case ATS_ALIGNED_BASIC_PER:
         case ATS_ALIGNED_CANONICAL_PER:
-            rval = aper_decode(codec_ctx, pduType, structure, input,
+            rval = aper_decode_ctx(codec_ctx, pduType, structure,
+                               &ext_decode_ctx, input,
                                input_size, DynamicBuffer.skip_bits, 0);
             *extra_bits = (DynamicBuffer.skip_bits + rval.consumed) % 8;
             rval.consumed = (DynamicBuffer.skip_bits + rval.consumed) >> 3;
@@ -843,8 +854,8 @@ decode_input_buffer(enum asn_transfer_syntax isyntax,
             rval.consumed = 0;
         }
     } else {
-        rval = asn_decode(codec_ctx, isyntax, pduType, structure,
-                          input, input_size);
+        rval = asn_decode_ctx(codec_ctx, isyntax, pduType, structure,
+                              &ext_decode_ctx, input, input_size);
     }
 
     return rval;
@@ -876,7 +887,7 @@ select_decode_input(const char *name, asn_TYPE_descriptor_t *pduType,
         if(add_bytes_to_buffer(file_buffer, bytes_read) != 0) {
             fprintf(stderr, "%s: Cannot buffer input: %s\n",
                     name, strerror(errno));
-            ASN_STRUCT_FREE(*pduType, *structure);
+            ASN_STRUCT_FREE_CTX(*pduType, *structure, &ext_decode_ctx);
             *structure = 0;
             return -1;
         }
@@ -914,7 +925,7 @@ retain_and_advance(const char *name, asn_TYPE_descriptor_t *pduType,
                   size_t input_size, asn_dec_rval_t *rval) {
     if(rval->consumed > input_size) {
         fprintf(stderr, "%s: Decoder consumed beyond available input\n", name);
-        ASN_STRUCT_FREE(*pduType, *structure);
+        ASN_STRUCT_FREE_CTX(*pduType, *structure, &ext_decode_ctx);
         *structure = 0;
         errno = EINVAL;
         return -1;
@@ -926,7 +937,7 @@ retain_and_advance(const char *name, asn_TYPE_descriptor_t *pduType,
                                bytes_read - rval->consumed) != 0) {
             fprintf(stderr, "%s: Cannot buffer input: %s\n",
                     name, strerror(errno));
-            ASN_STRUCT_FREE(*pduType, *structure);
+            ASN_STRUCT_FREE_CTX(*pduType, *structure, &ext_decode_ctx);
             *structure = 0;
             return -1;
         }
@@ -974,7 +985,7 @@ discard_unrestartable_partial(enum asn_transfer_syntax isyntax,
         fprintf(stderr, "=== End of Partial Results ===\n\n");
         *partial_printed = 1;
     }
-    ASN_STRUCT_FREE(*pduType, *structure);
+    ASN_STRUCT_FREE_CTX(*pduType, *structure, &ext_decode_ctx);
     *structure = 0;
     rval->consumed = 0;
 }
@@ -1012,7 +1023,7 @@ finish_decode_failure(enum asn_transfer_syntax isyntax,
         asn_fprint(stderr, pduType, structure);
         fprintf(stderr, "=== End of Partial Results ===\n\n");
     }
-    ASN_STRUCT_FREE(*pduType, structure);
+    ASN_STRUCT_FREE_CTX(*pduType, structure, &ext_decode_ctx);
 
     new_offset = DynamicBuffer.bytes_shifted + DynamicBuffer.offset;
     if(on_first_pdu
@@ -1143,7 +1154,7 @@ data_decode_from_file(enum asn_transfer_syntax isyntax,
             if(errno == 0) errno = EIO;
             fprintf(stderr, "%s: Cannot read input: %s\n",
                     name, strerror(errno));
-            ASN_STRUCT_FREE(*pduType, structure);
+            ASN_STRUCT_FREE_CTX(*pduType, structure, &ext_decode_ctx);
             return 0;
         }
         if(rd == 0 && feof(file) && !(tolerate_eof && DynamicBuffer.length)) {
