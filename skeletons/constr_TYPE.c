@@ -42,7 +42,7 @@ asn_struct_ctx_t *asn_ext_ctx_get(asn_struct_external_ctx_t *ext, void *st,
 	if(ext->frames_used - ASN_EXT_CTX_INLINE_FRAMES >= ext->heap_capacity) {
 		size_t ncap = ext->heap_capacity ? ext->heap_capacity * 2 : 8;
 		asn_struct_ctx_frame_t *nf = (asn_struct_ctx_frame_t *)
-			realloc(ext->heap_frames, ncap * sizeof(*nf));
+			REALLOC(ext->heap_frames, ncap * sizeof(*nf));
 		if(!nf) return 0;
 		ext->heap_frames = nf;
 		ext->heap_capacity = ncap;
@@ -67,7 +67,7 @@ void asn_struct_external_ctx_reset(asn_struct_external_ctx_t *ext) {
 	if(ext->frames_used > ASN_EXT_CTX_INLINE_FRAMES)
 		for(i = ASN_EXT_CTX_INLINE_FRAMES; i < ext->frames_used; i++)
 			FREEMEM(ext->heap_frames[i - ASN_EXT_CTX_INLINE_FRAMES].ctx.ptr);
-	free(ext->heap_frames);
+	FREEMEM(ext->heap_frames);
 	memset(ext, 0, sizeof(*ext));
 }
 
