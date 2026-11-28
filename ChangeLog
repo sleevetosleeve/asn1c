@@ -1,4 +1,21 @@
 Changes since v1.5.3:
+	* Make external-arena heap frames stable (issue #15): the overflow is now
+	  an array of pointers to individually CALLOC'd frames instead of a
+	  realloc'd frame array. Decoders hold asn_struct_ctx_t* across nested
+	  decode calls, and growing a realloc'd frame array left those pointers
+	  dangling (heap-use-after-free on the PKIX1 certificate in
+	  -fno-ctx-members mode, which needs >8 frames; found under ASan).
+	  check-ext-ctx now also asserts frame pointers survive array growth.
+	* Use the external decode-context arena only for the
+	  ASN_CTX_OFFSET_EXTERNAL sentinel (issue #15): asn_get_struct_ctx() now
+	  resolves a real ctx_offset to the embedded member even when the codec
+	  context carries an arena. The previous "arena wins whenever present" rule
+	  broke the PKIX1 example: ANY text/JER/XER adapters decode through
+	  stack-temporary view structs whose address and specifics are reused
+	  across sequential ANY values, so arena frames keyed on them collided
+	  (found by the manual c-cpp.yml run on vlm_master, PKIX1 check-ber).
+	  The (st, type_key) frame keying stays: -fno-ctx-members code is
+	  all-sentinel, where offset-0 inline members still alias.
 	* Route the external decode-context arena's heap-overflow array through
 	  the allocator macros (issue #15 amendment): REALLOC/FREEMEM instead of
 	  raw realloc/free in constr_TYPE.c, so consumers that redefine the macros

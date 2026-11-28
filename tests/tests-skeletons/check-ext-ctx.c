@@ -41,6 +41,13 @@ main(void) {
     for(i = 0; i < 16; i++)
         assert(asn_ext_ctx_get(&ext, storage[i], (const void *)(i + 1))
                == frames[i]);	/* reuse */
+    /* Heap frames are individually allocated: their addresses (and the
+       asn_struct_ctx_t* decoders hold across nested calls) must stay valid
+       when the overflow array grows. Dereferencing them here after two
+       growth steps catches a realloc-moved frame array (ASan would flag
+       use-after-free with the old layout). */
+    for(i = 0; i < 16; i++)
+        assert(frames[i]->phase == (short)(i + 1));
 
     /* Aliasing regression: nested inline members share the base address of
        their parent (single-member SEQUENCE wrapper at offset 0), so frames
@@ -75,12 +82,14 @@ main(void) {
         /* Sentinel offset without an arena cannot be resolved. */
         assert(asn_get_struct_ctx(&codec_ctx, &st, ASN_CTX_OFFSET_EXTERNAL, &st) == 0);
         assert(asn_get_struct_ctx(0, &st, ASN_CTX_OFFSET_EXTERNAL, &st) == 0);
-        /* With an arena in the codec context, the arena wins, even for a
-           structure that still has an embedded member. */
+        /* With a real offset the embedded member is authoritative even when
+           the codec context carries an arena (decoders running through stack
+           temporary views rely on this). */
         codec_ctx.ext_struct_ctx = &ext;
         assert(asn_get_struct_ctx(&codec_ctx, &st,
-               offsetof(struct ext_ctx_probe_s, ctx), (const void *)1)
-               == asn_ext_ctx_get(&ext, &st, (const void *)1));
+               offsetof(struct ext_ctx_probe_s, ctx), (const void *)1) == &st.ctx);
+        assert(ext.frames_used == 1);	/* only the aliasing probes above */
+        /* The sentinel offset resolves through the arena. */
         assert(asn_get_struct_ctx(&codec_ctx, &st, ASN_CTX_OFFSET_EXTERNAL,
                (const void *)2)
                == asn_ext_ctx_get(&ext, &st, (const void *)2));

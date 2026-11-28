@@ -64,7 +64,14 @@ typedef struct asn_struct_ctx_frame_s {
 
 typedef struct asn_struct_external_ctx_s {
 	asn_struct_ctx_frame_t inline_frames[ASN_EXT_CTX_INLINE_FRAMES];
-	asn_struct_ctx_frame_t *heap_frames;	/* Overflow past the inline frames */
+	/*
+	 * Overflow past the inline frames: an array of POINTERS to individually
+	 * allocated frames. Decoders hold asn_struct_ctx_t* across nested decode
+	 * calls, so frames must never move when the array grows (a plain
+	 * realloc'd array of frames left dangling ctx pointers — use-after-free
+	 * found on the PKIX1 certificate, which needs >8 frames).
+	 */
+	asn_struct_ctx_frame_t **heap_frames;
 	size_t frames_used;
 	size_t heap_capacity;
 } asn_struct_external_ctx_t;
@@ -82,11 +89,14 @@ void asn_struct_external_ctx_reset(asn_struct_external_ctx_t *ext);
 struct asn_codec_ctx_s;	/* Forward declaration */
 
 /*
- * Fetch the parsing context of structure st: from the external arena when the
- * codec context carries one, otherwise from the embedded member at ctx_offset.
- * type_key (the type specifics pointer) discriminates arena frames of nested
- * structures sharing the same address. Returns 0 when ctx_offset is
- * ASN_CTX_OFFSET_EXTERNAL but no arena is set.
+ * Fetch the parsing context of structure st. When ctx_offset is
+ * ASN_CTX_OFFSET_EXTERNAL (-fno-ctx-members code, no embedded member), the
+ * frame comes from the external arena carried in the codec context, keyed by
+ * (st, type_key) — type_key (the type specifics pointer) discriminates nested
+ * structures sharing the same base address. With a real offset the embedded
+ * member at ctx_offset is always used (decoders that run through stack
+ * temporary views rely on this); returns 0 for the sentinel without an arena
+ * or for a null st.
  */
 asn_struct_ctx_t *asn_get_struct_ctx(const struct asn_codec_ctx_s *opt_codec_ctx,
                                      void *st, unsigned ctx_offset,
