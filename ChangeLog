@@ -16,6 +16,10 @@ Changes since v1.5.3:
 	  (found by the manual c-cpp.yml run on vlm_master, PKIX1 check-ber).
 	  The (st, type_key) frame keying stays: -fno-ctx-members code is
 	  all-sentinel, where offset-0 inline members still alias.
+	* Fix literal "\n" in the -fno-ctx-members line of the asn1c -h usage text.
+	* Add docs/issue-15-s2s-postmortem.md: timeline and lessons for the external
+	  decode context feature (issue #15), incl. the late-found arena frame
+	  aliasing bug and the allocator-macro escape.
 	* Route the external decode-context arena's heap-overflow array through
 	  the allocator macros (issue #15 amendment): REALLOC/FREEMEM instead of
 	  raw realloc/free in constr_TYPE.c, so consumers that redefine the macros
