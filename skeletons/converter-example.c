@@ -66,7 +66,8 @@ static int opt_partial; /* -P (print partial decoding results on failure) */
 /*
  * External decode-context arena used for all decoding in this converter, so
  * it works with code generated both with and without -fno-ctx-members (the
- * arena takes precedence over embedded _asn_ctx members when present).
+ * arena is consulted for the ASN_CTX_OFFSET_EXTERNAL sentinel; with a real
+ * offset the embedded _asn_ctx member is used).
  * Zero-initialized once; every ASN_STRUCT_FREE_CTX / ASN_STRUCT_RESET_CTX
  * below resets it after releasing the structure.
  */

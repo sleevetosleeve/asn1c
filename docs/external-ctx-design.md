@@ -123,14 +123,22 @@ Defined in `skeletons/constr_TYPE.h` next to `asn_struct_ctx_t`:
   fixture; fixed by keying on the specifics pointer, which is unique per type).
 - `asn_struct_external_ctx_t` — the arena, one per top-level decode operation:
   an inline array of 8 frames (`ASN_EXT_CTX_INLINE_FRAMES = 8`) plus an
-  optional heap overflow, so the common case needs no allocation.
+  optional heap overflow (an array of pointers to individually allocated
+  frames — decoders hold `asn_struct_ctx_t *` across nested calls, so frames
+  must never move when the array grows; found as heap-use-after-free on the
+  PKIX1 certificate in `-fno-ctx-members` mode, which needs >8 frames), so the
+  common case needs no allocation.
 - Helpers (type-agnostic, no vtable change):
   `asn_ext_ctx_get(arena, st, type_key)` (find-or-create a zeroed frame),
   `asn_struct_external_ctx_reset(arena)` (free every frame's `ctx->ptr`
   scratch, free the heap overflow, zero the arena),
-  `asn_get_struct_ctx(opt_codec_ctx, st, ctx_offset)` (dual-path fetch used by
-  all decoder sites), and `asn_ctx_offset_valid(struct_size, ctx_offset)`
-  (sentinel-aware layout guard).
+  `asn_get_struct_ctx(opt_codec_ctx, st, ctx_offset, type_key)` (dual-path
+  fetch used by all decoder sites: the arena is consulted **only** for the
+  `ASN_CTX_OFFSET_EXTERNAL` sentinel; a real offset always resolves to the
+  embedded member, because decoders that run through stack-temporary view
+  structs (the ANY text/JER/XER adapters) reuse those addresses and would
+  collide in an address-keyed arena), and `asn_ctx_offset_valid(struct_size,
+  ctx_offset)` (sentinel-aware layout guard).
 - Carried inside `asn_codec_ctx_t` as a `void *ext_struct_ctx` field (a `void *`
   avoids header cycles); set by the `*_decode_ctx` entry points on their stack
   copy of the codec context, so it reaches every nested decoder through the
@@ -199,7 +207,8 @@ symmetry and pass the arena through `asn_codec_ctx_t` unchanged.
    now decodes through `asn_decode_ctx` / `uper_decode_ctx` / `aper_decode_ctx`
    with a file-scope arena and frees via `ASN_STRUCT_FREE_CTX`, so it works
    unchanged with both default and `-fno-ctx-members` generated code (the arena
-   takes precedence over embedded members when present). Previously deferred
+   is consulted only for the sentinel offset; default code keeps using its
+   embedded members). Previously deferred
    until all codecs had `_ctx` versions (decision recorded 2026-11-26, lifted
    2026-11-27); covered by `tests/tests-asn1c-smoke/check-ext-ctx.sh`.
 
@@ -233,6 +242,19 @@ pass the existing suites.
   (regression found by check-BER-retag's `Nested` fixture through the
   onboarded converter-example; locked by `Wrap` in the 610 module, the
   check-ext-ctx unit test, and the check-ext-ctx smoke test).
+- 2026-11-28: heap overflow frames are individually allocated behind a pointer
+  array so their addresses (and the ctx pointers decoders hold across nested
+  decode calls) survive array growth — fixes a heap-use-after-free in SET-OF
+  BER decode of the PKIX1 certificate with >8 live frames under
+  -fno-ctx-members (ASan).
+- 2026-11-28: fetch rule changed from "arena wins whenever present" to "arena
+  only for the sentinel offset" — the PKIX1 example (ANY members decoded via
+  stack view structs in ANY.c's ANY_text_prepare) collided in the arena because
+  the view address and its specifics are reused across sequential ANYs.
+  With a real offset the embedded member is authoritative again; the
+  (st, type_key) keying stays, since -fno-ctx-members code is all-sentinel and
+  offset-0 inline members still alias there. Found via the manual c-cpp.yml
+  run on vlm_master (PKIX1 example check-ber).
 - 2026-11-27: `converter-example.c` onboarded onto the `_ctx` entry points
   with a file-scope arena; the arena-wins-when-present fetch rule makes the
   same binary correct for both codegen modes. Arena helpers unit-tested in

@@ -29,9 +29,9 @@ asn_struct_ctx_t *asn_ext_ctx_get(asn_struct_external_ctx_t *ext, void *st,
 			return &ext->inline_frames[i].ctx;
 	if(ext->frames_used > ASN_EXT_CTX_INLINE_FRAMES)
 		for(i = ASN_EXT_CTX_INLINE_FRAMES; i < ext->frames_used; i++)
-			if(ext->heap_frames[i - ASN_EXT_CTX_INLINE_FRAMES].st == st
-			   && ext->heap_frames[i - ASN_EXT_CTX_INLINE_FRAMES].type_key == type_key)
-				return &ext->heap_frames[i - ASN_EXT_CTX_INLINE_FRAMES].ctx;
+			if(ext->heap_frames[i - ASN_EXT_CTX_INLINE_FRAMES]->st == st
+			   && ext->heap_frames[i - ASN_EXT_CTX_INLINE_FRAMES]->type_key == type_key)
+				return &ext->heap_frames[i - ASN_EXT_CTX_INLINE_FRAMES]->ctx;
 	if(ext->frames_used < ASN_EXT_CTX_INLINE_FRAMES) {
 		asn_struct_ctx_frame_t *f = &ext->inline_frames[ext->frames_used++];
 		f->st = st;
@@ -41,23 +41,29 @@ asn_struct_ctx_t *asn_ext_ctx_get(asn_struct_external_ctx_t *ext, void *st,
 	}
 	if(ext->frames_used - ASN_EXT_CTX_INLINE_FRAMES >= ext->heap_capacity) {
 		size_t ncap = ext->heap_capacity ? ext->heap_capacity * 2 : 8;
-		asn_struct_ctx_frame_t *nf = (asn_struct_ctx_frame_t *)
+		asn_struct_ctx_frame_t **nf = (asn_struct_ctx_frame_t **)
 			REALLOC(ext->heap_frames, ncap * sizeof(*nf));
 		if(!nf) return 0;
 		ext->heap_frames = nf;
 		ext->heap_capacity = ncap;
 	}
 	{
-		asn_struct_ctx_frame_t *f =
-			&ext->heap_frames[ext->frames_used - ASN_EXT_CTX_INLINE_FRAMES];
-		ext->frames_used++;
+		/*
+		 * Allocate the frame itself individually: growing heap_frames above
+		 * may realloc the pointer array, but existing frame addresses (and
+		 * the asn_struct_ctx_t* decoders hold across nested calls) stay
+		 * valid for the lifetime of the arena.
+		 */
+		asn_struct_ctx_frame_t *f = (asn_struct_ctx_frame_t *)
+			CALLOC(1, sizeof(*f));
+		if(!f) return 0;
 		f->st = st;
 		f->type_key = type_key;
-		memset(&f->ctx, 0, sizeof(f->ctx));
+		ext->heap_frames[ext->frames_used - ASN_EXT_CTX_INLINE_FRAMES] = f;
+		ext->frames_used++;
 		return &f->ctx;
 	}
 }
-
 
 void asn_struct_external_ctx_reset(asn_struct_external_ctx_t *ext) {
 	size_t i;
@@ -65,8 +71,12 @@ void asn_struct_external_ctx_reset(asn_struct_external_ctx_t *ext) {
 	for(i = 0; i < ext->frames_used && i < ASN_EXT_CTX_INLINE_FRAMES; i++)
 		FREEMEM(ext->inline_frames[i].ctx.ptr);
 	if(ext->frames_used > ASN_EXT_CTX_INLINE_FRAMES)
-		for(i = ASN_EXT_CTX_INLINE_FRAMES; i < ext->frames_used; i++)
-			FREEMEM(ext->heap_frames[i - ASN_EXT_CTX_INLINE_FRAMES].ctx.ptr);
+		for(i = ASN_EXT_CTX_INLINE_FRAMES; i < ext->frames_used; i++) {
+			asn_struct_ctx_frame_t *f =
+				ext->heap_frames[i - ASN_EXT_CTX_INLINE_FRAMES];
+			FREEMEM(f->ctx.ptr);
+			FREEMEM(f);
+		}
 	FREEMEM(ext->heap_frames);
 	memset(ext, 0, sizeof(*ext));
 }
@@ -74,11 +84,23 @@ void asn_struct_external_ctx_reset(asn_struct_external_ctx_t *ext) {
 asn_struct_ctx_t *asn_get_struct_ctx(const asn_codec_ctx_t *opt_codec_ctx,
                                      void *st, unsigned ctx_offset,
                                      const void *type_key) {
-	if(opt_codec_ctx && opt_codec_ctx->ext_struct_ctx)
-		return asn_ext_ctx_get(
-			(asn_struct_external_ctx_t *)opt_codec_ctx->ext_struct_ctx,
-			st, type_key);
-	if(!st || ctx_offset == ASN_CTX_OFFSET_EXTERNAL) return 0;
+	/*
+	 * The arena is used only when there is no embedded member to use
+	 * (ctx_offset == ASN_CTX_OFFSET_EXTERNAL, i.e. -fno-ctx-members code).
+	 * With a real offset the embedded member is always authoritative: some
+	 * decoders (ANY text/JER/XER paths) decode through stack-temporary view
+	 * structs whose address and specifics are reused across sequential
+	 * values, so an arena keyed on them would collide; the embedded member
+	 * is shuttled by those paths instead.
+	 */
+	if(ctx_offset == ASN_CTX_OFFSET_EXTERNAL) {
+		if(opt_codec_ctx && opt_codec_ctx->ext_struct_ctx)
+			return asn_ext_ctx_get(
+				(asn_struct_external_ctx_t *)opt_codec_ctx->ext_struct_ctx,
+				st, type_key);
+		return 0;
+	}
+	if(!st) return 0;
 	return (asn_struct_ctx_t *)((char *)st + ctx_offset);
 }
 
